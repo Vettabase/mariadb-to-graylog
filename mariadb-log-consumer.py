@@ -228,6 +228,46 @@ class Consumer:
     ##  Consumer Loop
     ##  =============
 
+    def get_next_word(self, line, offset=0, to_end=False):
+        """ Generic method to get the next word from a line, or None """
+        index = 0
+        word = ''
+        word_started = False
+
+        for char in line:
+            index += 1
+
+            # do nothing til we consume the offset
+            if index < offset:
+                continue
+
+            if char.isspace() and to_end == False:
+                # Space characters are separators, so
+                # ignore them before the word starts
+                # and end the loop if word was started.
+                # Also, ignore them if to_end==True, the loop
+                # will continue til the end of the line.
+                if word_started:
+                    break
+                else:
+                    continue
+
+            word_started = True
+            word += char
+
+        return {
+            "word": word,
+            "index": index
+        }
+
+    def extract_word(self, next_word):
+        """ Extract the word from a next_word fictionary, handle errors """
+        try:
+            word = next_word['word']
+        except:
+            abort(1, 'Malformed next_word dictionary: ' + str(next_word))
+        return word
+
     def consuming_loop(self):
         """ Consumer's main loop, in which we read next lines if available, or wait for more lines to be written.
             Calls a specific method based on sourcelog_type.
@@ -244,6 +284,19 @@ class Consumer:
 
     def error_log_process_line(self, line):
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
+        next_word = self.get_next_word(line)
+        date = next_word['word']
+
+        next_word = self.get_next_word(line, next_word['index'])
+        time = next_word['word']
+
+        next_word = self.get_next_word(line, next_word['index'])
+        level = next_word['word']
+
+        next_word = self.get_next_word(line, next_word['index'], True)
+        message = next_word['word']
+
+        print(str(next_word))
         print(line)
 
     def error_log_consuming_loop(self):
