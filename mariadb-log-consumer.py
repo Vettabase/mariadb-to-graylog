@@ -224,6 +224,8 @@ class Consumer:
         message += ', ' + self.get_gelf_field('level', level)
         message += '}'
 
+        return message
+
 
     ##  Consumer Loop
     ##  =============
@@ -296,10 +298,11 @@ class Consumer:
         next_word = self.get_next_word(line, next_word['index'], True)
         message = next_word['word']
 
-        print(str(next_word))
-        print(line)
-
         gelf_message = self.get_gelf_line(self.hostname, 'short', 'lev');
+
+        print(str(next_word))
+        print(gelf_message)
+        print(line)
 
     def error_log_consuming_loop(self):
         """ Consumer's main loop for the Error Log """
