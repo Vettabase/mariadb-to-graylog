@@ -189,7 +189,25 @@ class Consumer:
         self.logging.info(action + ':' + self.get_current_position() + ':' + self.EVENTLOG_PATH)
 
     def consuming_loop(self):
-        """ Consumer's main loop, in which we read next lines if available, or wait for more lines to be written """
+        """ Consumer's main loop, in which we read next lines if available, or wait for more lines to be written.
+            Calls a specific method based on sourcelog_type.
+        """
+        if self.sourcelog_type == 'ERROR':
+            self.error_log_consuming_loop()
+        else:
+            self.slow_log_consuming_loop()
+        self.log_coordinates('READ')
+
+    def error_log_consuming_loop(self):
+        """ Consumer's main loop for the Error Log """
+        source_line = self.log_handler.readline().rstrip()
+        while (source_line):
+            print(source_line)
+            source_line = self.log_handler.readline().rstrip()
+        self.log_coordinates('READ')
+
+    def slow_log_consuming_loop(self):
+        """ Consumer's main loop for the Slow log """
         source_line = self.log_handler.readline().rstrip()
         while (source_line):
             print(source_line)
