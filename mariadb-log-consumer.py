@@ -205,13 +205,15 @@ class Consumer:
             self,
             host,
             short_message,
-            level
+            level,
+            extra={ }
         ):
         """ Compose a line of GELF metrics for Graylog.
             GELF documentation:
             https://docs.graylog.org/docs/gelf
         """
         message = '{'
+
         message += self.get_gelf_field('version', '1.1')
         # The hostname was set previously
         message += ', ' + self.get_gelf_field('host', self.get_hostname())
@@ -222,6 +224,12 @@ class Consumer:
         # 0=Emergency, 1=Alert, 2=Critical, 3=Error, 4=Warning, 5=Notice, 6=Informational, 7=Debug
         # https://docs.delphix.com/docs534/system-administration/system-monitoring/setting-syslog-preferences/severity-levels-for-syslog-messages
         message += ', ' + self.get_gelf_field('level', level)
+
+        # all custom fields (not mentioned in GELF specs)
+        # must start with a '_'
+        for key in extra:
+            message += self.get_gelf_field('_' + key, extra[key])
+
         message += '}'
 
         return message
