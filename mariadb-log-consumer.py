@@ -188,6 +188,14 @@ class Consumer:
         self.last_position = self.get_current_position()
         self.logging.info(action + ':' + self.get_current_position() + ':' + self.EVENTLOG_PATH)
 
+    def cleanup(self):
+        """ Do the cleanup before execution terminates """
+        self.eventlog_handler.close()
+
+
+    ##  Consumer Loop
+    ##  =============
+
     def consuming_loop(self):
         """ Consumer's main loop, in which we read next lines if available, or wait for more lines to be written.
             Calls a specific method based on sourcelog_type.
@@ -198,21 +206,41 @@ class Consumer:
             self.slow_log_consuming_loop()
         self.log_coordinates('READ')
 
+
+    ##  Error Log
+    ##  =========
+
+    def error_log_process_line(self, line):
+        """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
+        print(line)
+
     def error_log_consuming_loop(self):
         """ Consumer's main loop for the Error Log """
         source_line = self.log_handler.readline().rstrip()
         while (source_line):
-            print(source_line)
+            self.error_log_process_line(source_line)
             source_line = self.log_handler.readline().rstrip()
         self.log_coordinates('READ')
+
+
+    ##  Slow Log
+    ##  ========
+
+    def slow_log_process_line(self, line):
+        """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
+        print(line)
 
     def slow_log_consuming_loop(self):
         """ Consumer's main loop for the Slow log """
         source_line = self.log_handler.readline().rstrip()
         while (source_line):
-            print(source_line)
+            self.slow_log_process_line(source_line)
             source_line = self.log_handler.readline().rstrip()
         self.log_coordinates('READ')
+
+
+    ##  GELF Messages
+    ##  =============
 
     def get_gelf_field(self, key, value):
         """ Compose a single key/value couple in a GELF line"""
@@ -241,10 +269,6 @@ class Consumer:
         # https://docs.delphix.com/docs534/system-administration/system-monitoring/setting-syslog-preferences/severity-levels-for-syslog-messages
         message += ', ' + self.get_gelf_field('level', level)
         message += '}'
-
-    def cleanup(self):
-        """ Do the cleanup before execution terminates """
-        self.eventlog_handler.close()
 
 
 def shutdown(sig, frame):
