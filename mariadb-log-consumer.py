@@ -153,7 +153,7 @@ class Consumer:
 
     def get_timestamp(self):
         """ Return UNIX timestamp (not decimals) """
-        return str( int ( time.time() ) )
+        return str( int ( self.time.time() ) )
 
     def get_hostname(self):
         """ Used to set the hostname for the first time """
