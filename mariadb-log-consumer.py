@@ -216,14 +216,14 @@ class Consumer:
 
         message += self.get_gelf_field('version', '1.1')
         # The hostname was set previously
-        message += ', ' + self.get_gelf_field('host', self.get_hostname())
+        message += ',' + self.get_gelf_field('host', self.get_hostname())
         # 'MariaDB Error Log' or 'MariaDB Slow Log'
-        message += ', ' + self.get_gelf_field('short_message', short_message)
-        message += ', ' + self.get_gelf_field('timestamp', self.get_timestamp() )
+        message += ',' + self.get_gelf_field('short_message', short_message)
+        message += ',' + self.get_gelf_field('timestamp', self.get_timestamp() )
         # Same levels as syslog:
         # 0=Emergency, 1=Alert, 2=Critical, 3=Error, 4=Warning, 5=Notice, 6=Informational, 7=Debug
         # https://docs.delphix.com/docs534/system-administration/system-monitoring/setting-syslog-preferences/severity-levels-for-syslog-messages
-        message += ', ' + self.get_gelf_field('level', level)
+        message += ',' + self.get_gelf_field('level', level)
 
         # all custom fields (not mentioned in GELF specs)
         # must start with a '_'
