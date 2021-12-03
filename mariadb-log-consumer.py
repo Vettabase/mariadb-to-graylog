@@ -45,8 +45,8 @@ class Consumer:
     # The module we use will automatically close and reopen the file
     # if logrotate truncates it.
 
-    EVENTLOG_PATH = '/var/slow-log-consumer/logs/'
-    EVENTLOG_NAME = 'events'
+    EVENTLOG_PATH = '/var/mariadb-to-graylog/logs'
+    EVENTLOG_NAME = 'events.log'
 
     eventlog_handler = None
     last_position = None
@@ -198,7 +198,7 @@ class Consumer:
 
     def get_gelf_field(self, key, value):
         """ Compose a single key/value couple in a GELF line"""
-        value = value.value('\\', '\\\\')
+        value = value.replace('\\', '\\\\')
         return '"' + key + '":"' + value + '"'
 
     def get_gelf_line(
@@ -298,6 +298,8 @@ class Consumer:
 
         print(str(next_word))
         print(line)
+
+        gelf_message = self.get_gelf_line(self.hostname, 'short', 'lev');
 
     def error_log_consuming_loop(self):
         """ Consumer's main loop for the Error Log """
