@@ -193,6 +193,38 @@ class Consumer:
         self.eventlog_handler.close()
 
 
+    ##  GELF Messages
+    ##  =============
+
+    def get_gelf_field(self, key, value):
+        """ Compose a single key/value couple in a GELF line"""
+        value = value.value('\\', '\\\\')
+        return '"' + key + '":"' + value + '"'
+
+    def get_gelf_line(
+            self,
+            host,
+            short_message,
+            level
+        ):
+        """ Compose a line of GELF metrics for Graylog.
+            GELF documentation:
+            https://docs.graylog.org/docs/gelf
+        """
+        message = '{'
+        message += self.get_gelf_field('version', '1.1')
+        # The hostname was set previously
+        message += ', ' + self.get_gelf_field('host', self.get_hostname())
+        # 'MariaDB Error Log' or 'MariaDB Slow Log'
+        message += ', ' + self.get_gelf_field('short_message', short_message)
+        message += ', ' + self.get_gelf_field('timestamp', self.get_timestamp() )
+        # Same levels as syslog:
+        # 0=Emergency, 1=Alert, 2=Critical, 3=Error, 4=Warning, 5=Notice, 6=Informational, 7=Debug
+        # https://docs.delphix.com/docs534/system-administration/system-monitoring/setting-syslog-preferences/severity-levels-for-syslog-messages
+        message += ', ' + self.get_gelf_field('level', level)
+        message += '}'
+
+
     ##  Consumer Loop
     ##  =============
 
@@ -237,38 +269,6 @@ class Consumer:
             self.slow_log_process_line(source_line)
             source_line = self.log_handler.readline().rstrip()
         self.log_coordinates('READ')
-
-
-    ##  GELF Messages
-    ##  =============
-
-    def get_gelf_field(self, key, value):
-        """ Compose a single key/value couple in a GELF line"""
-        value = value.value('\\', '\\\\')
-        return '"' + key + '":"' + value + '"'
-
-    def get_gelf_line(
-            self,
-            host,
-            short_message,
-            level
-        ):
-        """ Compose a line of GELF metrics for Graylog.
-            GELF documentation:
-            https://docs.graylog.org/docs/gelf
-        """
-        message = '{'
-        message += self.get_gelf_field('version', '1.1')
-        # The hostname was set previously
-        message += ', ' + self.get_gelf_field('host', self.get_hostname())
-        # 'MariaDB Error Log' or 'MariaDB Slow Log'
-        message += ', ' + self.get_gelf_field('short_message', short_message)
-        message += ', ' + self.get_gelf_field('timestamp', self.get_timestamp() )
-        # Same levels as syslog:
-        # 0=Emergency, 1=Alert, 2=Critical, 3=Error, 4=Warning, 5=Notice, 6=Informational, 7=Debug
-        # https://docs.delphix.com/docs534/system-administration/system-monitoring/setting-syslog-preferences/severity-levels-for-syslog-messages
-        message += ', ' + self.get_gelf_field('level', level)
-        message += '}'
 
 
 def shutdown(sig, frame):
