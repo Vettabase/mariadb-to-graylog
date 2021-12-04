@@ -316,7 +316,14 @@ class Consumer:
         next_word = self.get_next_word(line, next_word['index'], True)
         message = next_word['word']
 
-        gelf_message = self.get_gelf_line(self.hostname, 'short', 'lev');
+        if level == '[ERROR]':
+            level = '3'
+        elif level == '[Warning]':
+            level = '4'
+        elif level == '[Note]':
+            level = '6'
+
+        gelf_message = self.get_gelf_line(self.hostname, 'short', level)
 
         print(str(next_word))
         print(gelf_message)
