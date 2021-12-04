@@ -305,6 +305,9 @@ class Consumer:
         time = next_word['word']
 
         next_word = self.get_next_word(line, next_word['index'])
+        thread = next_word['word']
+
+        next_word = self.get_next_word(line, next_word['index'])
         level = next_word['word']
 
         next_word = self.get_next_word(line, next_word['index'], True)
