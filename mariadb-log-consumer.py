@@ -269,6 +269,9 @@ class Consumer:
             word_started = True
             word += char
 
+        if to_end == True:
+            word = word.strip()
+
         return {
             "word": word,
             "index": index
