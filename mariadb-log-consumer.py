@@ -231,11 +231,8 @@ class Consumer:
 
         # all custom fields (not mentioned in GELF specs)
         # must start with a '_'
-        is_first = True
         for key in extra:
-            if is_first:
-                message += ','
-            message += self.get_gelf_field('_' + key, extra[key])
+            message += ',' + self.get_gelf_field('_' + key, extra[key])
 
         message += '}'
 
