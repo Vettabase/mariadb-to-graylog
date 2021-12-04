@@ -231,7 +231,10 @@ class Consumer:
 
         # all custom fields (not mentioned in GELF specs)
         # must start with a '_'
+        is_first = True
         for key in extra:
+            if is_first:
+                message += ','
             message += self.get_gelf_field('_' + key, extra[key])
 
         message += '}'
@@ -323,7 +326,11 @@ class Consumer:
         elif level == '[Note]':
             level = '6'
 
-        gelf_message = self.get_gelf_line(self.hostname, 'short', level)
+        custom = {
+            "text": message
+        }
+
+        gelf_message = self.get_gelf_line(self.hostname, 'short', level, custom)
 
         print(str(next_word))
         print(gelf_message)
