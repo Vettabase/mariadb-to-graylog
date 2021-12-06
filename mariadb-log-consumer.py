@@ -19,6 +19,7 @@ class Consumer:
     import time
     import os
     #import pidfile
+    import datetime
 
 
     ##  Members
@@ -206,6 +207,7 @@ class Consumer:
     def get_gelf_line(
             self,
             # Mandatory GELF properties
+            timestamp,
             host,
             short_message,
             level,
@@ -223,7 +225,7 @@ class Consumer:
         message += ',' + self.get_gelf_field('host', self.get_hostname())
         # 'MariaDB Error Log' or 'MariaDB Slow Log'
         message += ',' + self.get_gelf_field('short_message', short_message)
-        message += ',' + self.get_gelf_field('timestamp', self.get_timestamp() )
+        message += ',' + self.get_gelf_field('timestamp', str(timestamp))
         # Same levels as syslog:
         # 0=Emergency, 1=Alert, 2=Critical, 3=Error, 4=Warning, 5=Notice, 6=Informational, 7=Debug
         # https://docs.delphix.com/docs534/system-administration/system-monitoring/setting-syslog-preferences/severity-levels-for-syslog-messages
@@ -302,10 +304,10 @@ class Consumer:
     def error_log_process_line(self, line):
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
         next_word = self.get_next_word(line)
-        date = next_word['word']
+        date_part = next_word['word']
 
         next_word = self.get_next_word(line, next_word['index'])
-        time = next_word['word']
+        time_part = next_word['word']
 
         next_word = self.get_next_word(line, next_word['index'])
         thread = next_word['word']
@@ -323,11 +325,23 @@ class Consumer:
         elif level == '[Note]':
             level = '6'
 
+        # We are doing this to zeropad the "hour" part.
+        # We could just zeropad time_part, but we want to be flexible in case we need to add
+        # a microsecond part.
+        try:
+            time_list = time_part.split(':')
+            date_time = date_part + ' ' + time_list[0].zfill(2) + ':' + time_list[1].zfill(2) + ':' + time_list[2].zfill(2)
+        except:
+            return True
+
+        date_time = self.datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S").timetuple()
+        timestamp = int(self.time.mktime(date_time))
+
         custom = {
             "text": message
         }
 
-        gelf_message = self.get_gelf_line(self.hostname, 'short', level, custom)
+        gelf_message = self.get_gelf_line(timestamp, self.hostname, 'short', level, custom)
 
         print(str(next_word))
         print(gelf_message)
