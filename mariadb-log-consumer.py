@@ -8,6 +8,12 @@ import signal
 consumer = None
 
 
+class Registry:
+    PROGRAM = 'MariaDB To Graylog'
+    VERSION = '0.1'
+    DESCRIPTION = 'Consume MariaDB error & slow logs and send them to GrayLog'
+
+
 class Consumer:
     """
     Flexible metaclass for defining useful decorator functions.
@@ -83,9 +89,9 @@ class Consumer:
         # parse CLI arguments
 
         arg_parser = argparse.ArgumentParser(
-            prog='mariadb-log-consumer',
-            version='0.1',
-            description='Consume logs and send them to GrayLog'
+            prog = Registry.PROGRAM,
+            version = Registry.VERSION,
+            description = Registry.DESCRIPTION
         )
         arg_parser.add_argument(
             '-t',
