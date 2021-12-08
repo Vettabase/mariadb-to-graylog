@@ -19,7 +19,11 @@ class Registry:
 
     DEBUG = {
         # Print GELF messages before sending them
-        "GELF_MESSAGES": True
+        "GELF_MESSAGES": True,
+        # Print read log lines
+        "LOG_LINES": False,
+        # Print info about parsed log lines
+        "LOG_PARSER": False
     }
 
 
@@ -363,9 +367,12 @@ class Consumer:
 
         gelf_message = self.get_gelf_line(timestamp, self.hostname, 'short', level, custom)
 
-        print(str(next_word))
+        if Registry.DEBUG['LOG_LINES']:
+            print(line)
+        if Registry.DEBUG['LOG_PARSER']:
+            print(str(next_word))
+
         self.send_gelf_message(gelf_message)
-        print(line)
 
     def error_log_consuming_loop(self):
         """ Consumer's main loop for the Error Log """
