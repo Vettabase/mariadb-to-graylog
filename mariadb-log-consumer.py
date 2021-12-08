@@ -9,6 +9,9 @@ consumer = None
 
 
 class Registry:
+    """
+    Global constants (Registry pattern)
+    """
     PROGRAM = 'MariaDB To Graylog'
     VERSION = '0.1'
     DESCRIPTION = 'Consume MariaDB error & slow logs and send them to GrayLog'
