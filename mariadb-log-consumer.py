@@ -12,9 +12,15 @@ class Registry:
     """
     Global constants (Registry pattern)
     """
+
     PROGRAM = 'MariaDB To Graylog'
     VERSION = '0.1'
     DESCRIPTION = 'Consume MariaDB error & slow logs and send them to GrayLog'
+
+    DEBUG = {
+        # Print GELF messages before sending them
+        "GELF_MESSAGES": True
+    }
 
 
 class Consumer:
@@ -249,6 +255,11 @@ class Consumer:
 
         return message
 
+    def send_gelf_message(self, gelf_message):
+        if Registry.DEBUG['GELF_MESSAGES']:
+            print(gelf_message)
+        return True
+
 
     ##  Consumer Loop
     ##  =============
@@ -353,7 +364,7 @@ class Consumer:
         gelf_message = self.get_gelf_line(timestamp, self.hostname, 'short', level, custom)
 
         print(str(next_word))
-        print(gelf_message)
+        self.send_gelf_message(gelf_message)
         print(line)
 
     def error_log_consuming_loop(self):
