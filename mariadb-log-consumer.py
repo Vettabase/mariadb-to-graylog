@@ -76,7 +76,7 @@ class Consumer:
     #
     # We'll send GELF messages to Graylog via UDP.
 
-    graylog = {
+    GRAYLOG = {
         'host': None,
         'port': None,
         'gelf_version': '1.1'
@@ -144,10 +144,10 @@ class Consumer:
         self.sourcelog_type = args.log_type.upper()
         self.sourcelog_path = str(args.log)
 
-        self.graylog['host'] = args.graylog_host
-        self.graylog['port'] = args.graylog_port
+        self.GRAYLOG['host'] = args.graylog_host
+        self.GRAYLOG['port'] = args.graylog_port
 
-        if (self.graylog['host'] and not self.graylog['port']) or (self.graylog['port'] and not self.graylog['host']):
+        if (self.GRAYLOG['host'] and not self.GRAYLOG['port']) or (self.GRAYLOG['port'] and not self.GRAYLOG['host']):
             abort(2, 'Set both --graylog-host and --graylog-port, or none of them')
 
         try:
@@ -240,7 +240,7 @@ class Consumer:
         """
         message = '{'
 
-        message += self.get_gelf_field('version', self.graylog['gelf_version'])
+        message += self.get_gelf_field('version', self.GRAYLOG['gelf_version'])
         # The hostname was set previously
         message += ',' + self.get_gelf_field('host', self.get_hostname())
         # 'MariaDB Error Log' or 'MariaDB Slow Log'
