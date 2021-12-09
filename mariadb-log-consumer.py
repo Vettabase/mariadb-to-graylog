@@ -19,11 +19,11 @@ class Registry:
 
     DEBUG = {
         # Print GELF messages before sending them
-        "GELF_MESSAGES": True,
+        'GELF_MESSAGES': True,
         # Print read log lines
-        "LOG_LINES": False,
+        'LOG_LINES': False,
         # Print info about parsed log lines
-        "LOG_PARSER": False
+        'LOG_PARSER': False
     }
 
 
