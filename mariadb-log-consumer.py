@@ -72,13 +72,13 @@ class Consumer:
     last_position = None
 
 
-    # Graylog
-    #
-    # We'll send GELF messages to Graylog via UDP.
-
+    # Necessary information to send messages to Graylog.
     GRAYLOG = {
+        # Graylog host
         'host': None,
+        # Graylog port
         'port': None,
+        # GELF version to use
         'gelf_version': '1.1'
     }
 
