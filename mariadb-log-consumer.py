@@ -78,8 +78,10 @@ class Consumer:
 
     GELF_VERSION = '1.1'
 
-    graylog_host = None
-    graylog_port = None
+    graylog = {
+        'host': None,
+        'port': None
+    }
 
 
     # Misc
@@ -143,10 +145,10 @@ class Consumer:
         self.sourcelog_type = args.log_type.upper()
         self.sourcelog_path = str(args.log)
 
-        self.graylog_host = args.graylog_host
-        self.graylog_port = args.graylog_port
+        self.graylog['host'] = args.graylog_host
+        self.graylog['port'] = args.graylog_port
 
-        if (self.graylog_host and not self.graylog_port) or (self.graylog_port and not self.graylog_host):
+        if (self.graylog['host'] and not self.graylog['port']) or (self.graylog['port'] and not self.graylog['host']):
             abort(2, 'Set both --graylog-host and --graylog-port, or none of them')
 
         try:
