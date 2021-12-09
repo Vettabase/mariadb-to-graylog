@@ -76,11 +76,10 @@ class Consumer:
     #
     # We'll send GELF messages to Graylog via UDP.
 
-    GELF_VERSION = '1.1'
-
     graylog = {
         'host': None,
-        'port': None
+        'port': None,
+        'gelf_version': '1.1'
     }
 
 
@@ -241,7 +240,7 @@ class Consumer:
         """
         message = '{'
 
-        message += self.get_gelf_field('version', self.GELF_VERSION)
+        message += self.get_gelf_field('version', self.graylog['gelf_version'])
         # The hostname was set previously
         message += ',' + self.get_gelf_field('host', self.get_hostname())
         # 'MariaDB Error Log' or 'MariaDB Slow Log'
