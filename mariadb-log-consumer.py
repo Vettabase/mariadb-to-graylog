@@ -393,3 +393,5 @@ def abort(return_code, message):
 
 if __name__ == '__main__':
     Registry.consumer = Consumer()
+
+#EOF

@@ -38,3 +38,5 @@ class Registry:
 
     #: Consumer instance
     consumer = None
+
+#EOF

@@ -51,3 +51,5 @@ class Eventlog:
     def close(self):
         """ Close the Eventlog """
         self._handler.close()
+
+#EOF
