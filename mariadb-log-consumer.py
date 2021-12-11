@@ -27,6 +27,54 @@ class Registry:
     }
 
 
+class Eventlog:
+    """
+    Eventlog handler.
+    """
+
+    # Log
+    #
+    # The log contains rows in this format:
+    #
+    # READ:12345:slow.log
+    # SENT:12345:slow.log
+    #
+    # The first column tells us whether the entry refers to read rows
+    # (from the original source) or to rows sent to their destination.
+    # Rotation is supposed to happen via logrotate.
+    # The module we use will automatically close and reopen the file
+    # if logrotate truncates it.
+
+    _EVENTLOG_PATH = '/var/mariadb-to-graylog/logs'
+    _EVENTLOG_NAME = 'events.log'
+
+    _handler = None
+
+
+    ##  Methods
+    ##  =======
+
+    def _get_name(self):
+        """ Compose the file for a new eventlog """
+        return self._EVENTLOG_PATH + '/' + self._EVENTLOG_NAME
+
+    def __init__(self):
+        """ Open newest log file. If the file is changed (eg by logrotate) it closes and reopens it. """
+        file = self._get_name()
+        try:
+            self._handler = open(file, 'a')
+            print('File opened')
+        except:
+            print('File NOT opened')
+            abort(3, 'Could not open or create eventlog: ' + eventlog_file)
+
+    def append(self, message):
+        self._handler.write(message + "\n")
+
+    def close(self):
+        self._handler.close()
+
+
 class Consumer:
     """
     Flexible metaclass for defining useful decorator functions.
@@ -44,32 +92,17 @@ class Consumer:
     ##  Members
     ##  =======
 
+    # Eventlog instance
+    eventlog = None
+
     # Type of log to consume, uppercase. Allowed values: ERROR, SLOW
     sourcelog_type = None
     # Path and name of the log to consume
     sourcelog_path = None
     # Log file handler, watched
     sourcelog_handler = None
-
-
-    # Log
-    #
-    # The log contains rows in this format:
-    #
-    # READ:12345:slow.log
-    # SENT:12345:slow.log
-    #
-    # The first column tells us whether the entry refers to read rows
-    # (from the original source) or to rows sent to their destination.
-    # Rotation is supposed to happen via logrotate.
-    # The module we use will automatically close and reopen the file
-    # if logrotate truncates it.
-
-    EVENTLOG_PATH = '/var/mariadb-to-graylog/logs'
-    EVENTLOG_NAME = 'events.log'
-
-    eventlog_handler = None
-    last_position = None
+    # last read line
+    sourcelog_last_position = None
 
 
     # Necessary information to send messages to Graylog.
@@ -166,7 +199,7 @@ class Consumer:
         arg_parser = None
 
         self.register_signal_handlers()
-        self.open_eventlog()
+        self.eventlog = Eventlog()
         self.consuming_loop()
 
     def register_signal_handlers(self):
@@ -183,37 +216,18 @@ class Consumer:
         import socket
         return socket.gethostname()
 
-    def get_eventlog_name(self):
-        """ Compose the file for a new eventlog """
-        return self.EVENTLOG_PATH + '/' + self.EVENTLOG_NAME
-
-    def open_eventlog(self):
-        """ Open newest log file. If the file is changed (eg by logrotate) it closes and reopens it. """
-        import logging
-        import logging.handlers
-        eventlog_file = self.get_eventlog_name()
-        try:
-            self.eventlog_handler = logging.handlers.WatchedFileHandler(eventlog_file)
-        except:
-            abort(3, 'Could not open or create eventlog: ' + eventlog_file)
-        self.eventlog_handler.setFormatter(logging.Formatter(logging.BASIC_FORMAT))
-        self.eventlog_handler.setLevel(logging.INFO)
-        root = logging.getLogger()
-        root.addHandler(self.eventlog_handler)
-        self.logging = logging
-
     def get_current_position(self):
         """ Get the position that we're currently reading """
         return str(self.log_handler.tell())
 
     def log_coordinates(self, action):
         """ Log last read coordinates and whether the last rows were sent or not """
-        self.last_position = self.get_current_position()
-        self.logging.info(action + ':' + self.get_current_position() + ':' + self.EVENTLOG_PATH)
+        self.sourcelog_last_position = self.get_current_position()
+        self.eventlog.append(action + ':' + self.get_current_position() + ':' + self.sourcelog_path)
 
     def cleanup(self):
         """ Do the cleanup before execution terminates """
-        self.eventlog_handler.close()
+        self.eventlog.close()
 
 
     ##  GELF Messages
