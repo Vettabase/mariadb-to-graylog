@@ -180,6 +180,9 @@ class Consumer:
         if args.log.find(Eventlog.FIELD_SEPARATOR) > -1:
             abort(2, 'The source log name and path cannot contain the character: "' + Eventlog.FIELD_SEPARATOR + '"')
 
+        if (args.graylog_host and not args.graylog_port) or (args.graylog_port and not args.graylog_host):
+            abort(2, 'Set both --graylog-host and --graylog-port, or none of them')
+
         # copy arguments into object members
 
         self.sourcelog_type = args.log_type.upper()
@@ -187,9 +190,6 @@ class Consumer:
 
         self.GRAYLOG['host'] = args.graylog_host
         self.GRAYLOG['port'] = args.graylog_port
-
-        if (self.GRAYLOG['host'] and not self.GRAYLOG['port']) or (self.GRAYLOG['port'] and not self.GRAYLOG['host']):
-            abort(2, 'Set both --graylog-host and --graylog-port, or none of them')
 
         try:
             self.log_handler = open(self.sourcelog_path, 'r', 0)
