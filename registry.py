@@ -7,22 +7,22 @@
 
 
 class Registry:
-    """
+    '''
     Global constants and variables (Registry pattern)
-    """
+    '''
 
 
     ##  Global Constants
     ##  ================
 
-    # Program name
+    #: Program name
     PROGRAM = 'MariaDB To Graylog'
-    # Program version
+    #: Program version
     VERSION = '0.1'
-    # Program description
+    #: Program description
     DESCRIPTION = 'Consume MariaDB error & slow logs and send them to GrayLog'
 
-    # Backup flags, for additional output
+    #: Backup flags, for additional output
     DEBUG = {
         # Print GELF messages before sending them
         'GELF_MESSAGES': True,
@@ -36,5 +36,5 @@ class Registry:
     ##  Global Variables
     ##  ================
 
-    # Consumer instance
+    #: Consumer instance
     consumer = None
