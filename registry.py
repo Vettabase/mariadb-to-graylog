@@ -7,9 +7,9 @@
 
 
 class Registry:
-    '''
+    """
     Global constants and variables (Registry pattern)
-    '''
+    """
 
 
     ##  Global Constants
