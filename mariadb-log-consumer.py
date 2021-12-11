@@ -5,9 +5,6 @@ import sys
 import signal
 
 
-consumer = None
-
-
 class Registry:
     """
     Global constants (Registry pattern)
@@ -23,7 +20,10 @@ class Registry:
         # Print read log lines
         'LOG_LINES': False,
         # Print info about parsed log lines
-        'LOG_PARSER': False
+        'LOG_PARSER': False,
+
+        # Consumer instance
+        "consumer": None
     }
 
 
@@ -449,18 +449,18 @@ class Consumer:
 
 def shutdown(sig, frame):
     """ Terminate the program normally """
-    consumer.cleanup()
+    Registry.consumer.cleanup()
     sys.exit(0)
 
 
 def abort(return_code, message):
     """ Abort the program with specified return code and error message """
-    if consumer:
-        consumer.cleanup()
+    if Registry.consumer:
+        Registry.consumer.cleanup()
     if message:
         print(message)
     sys.exit(return_code)
 
 
 if __name__ == '__main__':
-    consumer = Consumer()
+    Registry.consumer = Consumer()
