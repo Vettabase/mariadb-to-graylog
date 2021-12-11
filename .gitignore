@@ -1,2 +1,4 @@
+# Exclude .pyc files
+**/*.pyc
 # Log examples for testing can be put here
 logs/*
