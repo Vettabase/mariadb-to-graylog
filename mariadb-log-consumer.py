@@ -51,6 +51,7 @@ class Eventlog:
     # separator between fields, in the same line
     FIELD_SEPARATOR = ':'
 
+    # log file handler
     _handler = None
 
 
