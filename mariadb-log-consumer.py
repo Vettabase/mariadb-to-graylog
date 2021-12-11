@@ -157,18 +157,24 @@ class Consumer:
             required=True,
             help='Path and name of the log file to consume'
         )
+        # MariaDB tools use -h for the host they connect to
+        # but with ArgParse it's used for --help, we we use
+        # uppercase -H instead
         arg_parser.add_argument(
             '-H',
             '--graylog-host',
             default='',
             help='Graylog hostname'
         )
+        # MariaDB tools use -P for the port they connect to
         arg_parser.add_argument(
             '-P',
             '--graylog-port',
             type=int,
             help='Graylog UDP port'
         )
+        # Advertised name of the local host.
+        # Shortened as -n because -h is already taken
         arg_parser.add_argument(
             '-n',
             '--hostname',
