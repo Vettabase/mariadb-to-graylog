@@ -48,6 +48,9 @@ class Eventlog:
     _EVENTLOG_PATH = '/var/mariadb-to-graylog/logs'
     _EVENTLOG_NAME = 'events.log'
 
+    # separator between fields, in the same line
+    FIELD_SEPARATOR = ':'
+
     _handler = None
 
 
@@ -68,8 +71,8 @@ class Eventlog:
             print('File NOT opened')
             abort(3, 'Could not open or create eventlog: ' + eventlog_file)
 
-    def append(self, message):
-        self._handler.write(message + "\n")
+    def append(self, action, position, sourcefile):
+        self._handler.write(action + self.FIELD_SEPARATOR + position + self.FIELD_SEPARATOR + sourcefile + "\n")
 
     def close(self):
         self._handler.close()
@@ -172,6 +175,11 @@ class Consumer:
         )
         args = arg_parser.parse_args()
 
+        # validate arguments
+
+        if args.log.find(Eventlog.FIELD_SEPARATOR) > -1:
+            abort(2, 'The source log name and path cannot contain the character: "' + Eventlog.FIELD_SEPARATOR + '"')
+
         # copy arguments into object members
 
         self.sourcelog_type = args.log_type.upper()
@@ -223,7 +231,7 @@ class Consumer:
     def log_coordinates(self, action):
         """ Log last read coordinates and whether the last rows were sent or not """
         self.sourcelog_last_position = self.get_current_position()
-        self.eventlog.append(action + ':' + self.get_current_position() + ':' + self.sourcelog_path)
+        self.eventlog.append(action, self.get_current_position(), self.sourcelog_path)
 
     def cleanup(self):
         """ Do the cleanup before execution terminates """
