@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 
 
+""" This module only contains a Registry class, which contains global (program-level)
+    constants and variables.
+"""
+
+
 class Registry:
     """
     Global constants (Registry pattern)
