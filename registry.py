@@ -8,8 +8,12 @@
 
 class Registry:
     """
-    Global constants (Registry pattern)
+    Global constants and variables (Registry pattern)
     """
+
+
+    ##  Global Constants
+    ##  ================
 
     PROGRAM = 'MariaDB To Graylog'
     VERSION = '0.1'
@@ -23,6 +27,10 @@ class Registry:
         # Print info about parsed log lines
         'LOG_PARSER': False
     }
+
+
+    ##  Global Variables
+    ##  ================
 
     # Consumer instance
     consumer = None
