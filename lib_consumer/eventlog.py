@@ -20,13 +20,15 @@ class Eventlog:
     # The module we use will automatically close and reopen the file
     # if logrotate truncates it.
 
+    #: Path of the eventlog file
     _EVENTLOG_PATH = '/var/mariadb-to-graylog/logs'
+    # Name of the eventlog file
     _EVENTLOG_NAME = 'events.log'
 
-    # separator between fields, in the same line
+    #: Separator between fields, in the same line
     FIELD_SEPARATOR = ':'
 
-    # log file handler
+    #: Eventlog file handler
     _handler = None
 
 
