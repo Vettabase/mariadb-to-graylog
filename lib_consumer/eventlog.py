@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 
+""" Includes the eventlog handler. """
+
+
 class Eventlog:
-    """
-    Eventlog handler.
-    """
+    """ Eventlog handler. """
 
     # Log
     #
