@@ -372,12 +372,20 @@ class Consumer:
         next_word = self.get_next_word(line, next_word['index'], True)
         message = next_word['word']
 
-        if level == '[ERROR]':
+        # to increase format changes resilience, remove brackets and make uppercase
+        # but then set to UNKNOWN if not recognised
+        level = level          \
+            .replace('[', '')  \
+            .replace(']', '')  \
+            .upper()
+        if level == 'ERROR':
             level = '3'
-        elif level == '[Warning]':
+        elif level == 'WARNING':
             level = '4'
-        elif level == '[Note]':
+        elif level == 'NOTE':
             level = '6'
+        else:
+            level = 'UNKNOWN'
 
         # We are doing this to zeropad the "hour" part.
         # We could just zeropad time_part, but we want to be flexible in case we need to add
