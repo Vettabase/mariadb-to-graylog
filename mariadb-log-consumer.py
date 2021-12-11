@@ -66,9 +66,7 @@ class Eventlog:
         file = self._get_name()
         try:
             self._handler = open(file, 'a')
-            print('File opened')
         except:
-            print('File NOT opened')
             abort(3, 'Could not open or create eventlog: ' + eventlog_file)
 
     def append(self, action, position, sourcefile):
