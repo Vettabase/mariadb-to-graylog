@@ -21,8 +21,8 @@ class Registry:
         # Print read log lines
         'LOG_LINES': False,
         # Print info about parsed log lines
-        'LOG_PARSER': False,
-
-        # Consumer instance
-        "consumer": None
+        'LOG_PARSER': False
     }
+
+    # Consumer instance
+    consumer = None
