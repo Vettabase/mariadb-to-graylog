@@ -45,7 +45,7 @@ class Consumer:
         # Graylog port
         'port': None,
         # GELF version to use
-        'gelf_version': '1.1'
+        'GELF_version': '1.1'
     }
 
 
@@ -174,56 +174,6 @@ class Consumer:
         self.eventlog.close()
 
 
-    ##  GELF Messages
-    ##  =============
-
-    def get_gelf_field(self, key, value):
-        """ Compose a single key/value couple in a GELF line"""
-        value = value.replace('\\', '\\\\')
-        return '"' + key + '":"' + value + '"'
-
-    def get_gelf_line(
-            self,
-            # Mandatory GELF properties
-            timestamp,
-            host,
-            short_message,
-            level,
-            # Custom properties
-            extra={ }
-        ):
-        """ Compose a line of GELF metrics for Graylog.
-            GELF documentation:
-            https://docs.graylog.org/docs/gelf
-        """
-        message = '{'
-
-        message += self.get_gelf_field('version', self.GRAYLOG['gelf_version'])
-        # The hostname was set previously
-        message += ',' + self.get_gelf_field('host', self.get_hostname())
-        # 'MariaDB Error Log' or 'MariaDB Slow Log'
-        message += ',' + self.get_gelf_field('short_message', short_message)
-        message += ',' + self.get_gelf_field('timestamp', str(timestamp))
-        # Same levels as syslog:
-        # 0=Emergency, 1=Alert, 2=Critical, 3=Error, 4=Warning, 5=Notice, 6=Informational, 7=Debug
-        # https://docs.delphix.com/docs534/system-administration/system-monitoring/setting-syslog-preferences/severity-levels-for-syslog-messages
-        message += ',' + self.get_gelf_field('level', level)
-
-        # all custom fields (not mentioned in GELF specs)
-        # must start with a '_'
-        for key in extra:
-            message += ',' + self.get_gelf_field('_' + key, extra[key])
-
-        message += '}'
-
-        return message
-
-    def send_gelf_message(self, gelf_message):
-        if Registry.DEBUG['GELF_MESSAGES']:
-            print(gelf_message)
-        return True
-
-
     ##  Consumer Loop
     ##  =============
 
@@ -342,14 +292,22 @@ class Consumer:
                 "text": message
             }
 
-            gelf_message = self.get_gelf_line(timestamp, self.hostname, 'short', level, custom)
+            message = GELF_message(
+                    Registry.DEBUG,
+                    self.GRAYLOG['GELF_version'],
+                    timestamp,
+                    self.get_hostname(),
+                    'short',
+                    level,
+                    custom
+                )
 
             if Registry.DEBUG['LOG_LINES']:
                 print(line)
             if Registry.DEBUG['LOG_PARSER']:
                 print(str(next_word))
 
-            self.send_gelf_message(gelf_message)
+            message.send()
 
     def error_log_consuming_loop(self):
         """ Consumer's main loop for the Error Log """
