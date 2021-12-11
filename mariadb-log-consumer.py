@@ -357,6 +357,8 @@ class Consumer:
 
     def error_log_process_line(self, line):
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
+        well_formed = True
+
         next_word = self.get_next_word(line)
         date_part = next_word['word']
 
@@ -372,45 +374,47 @@ class Consumer:
         next_word = self.get_next_word(line, next_word['index'], True)
         message = next_word['word']
 
-        # to increase format changes resilience, remove brackets and make uppercase
-        # but then set to UNKNOWN if not recognised
-        level = level          \
-            .replace('[', '')  \
-            .replace(']', '')  \
-            .upper()
-        if level == 'ERROR':
-            level = '3'
-        elif level == 'WARNING':
-            level = '4'
-        elif level == 'NOTE':
-            level = '6'
-        else:
-            level = 'UNKNOWN'
-
         # We are doing this to zeropad the "hour" part.
         # We could just zeropad time_part, but we want to be flexible in case we need to add
         # a microsecond part.
+        date_time = None
         try:
             time_list = time_part.split(':')
             date_time = date_part + ' ' + time_list[0].zfill(2) + ':' + time_list[1].zfill(2) + ':' + time_list[2].zfill(2)
         except:
-            return True
+            well_formed = False
 
-        date_time = self.datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S").timetuple()
-        timestamp = int(self.time.mktime(date_time))
+        if well_formed:
+            date_time = self.datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S").timetuple()
+            timestamp = int(self.time.mktime(date_time))
 
-        custom = {
-            "text": message
-        }
+            # to increase format changes resilience, remove brackets and make uppercase
+            # but then set to UNKNOWN if not recognised
+            level = level          \
+                .replace('[', '')  \
+                .replace(']', '')  \
+                .upper()
+            if level == 'ERROR':
+                level = '3'
+            elif level == 'WARNING':
+                level = '4'
+            elif level == 'NOTE':
+                level = '6'
+            else:
+                level = 'UNKNOWN'
 
-        gelf_message = self.get_gelf_line(timestamp, self.hostname, 'short', level, custom)
+            custom = {
+                "text": message
+            }
 
-        if Registry.DEBUG['LOG_LINES']:
-            print(line)
-        if Registry.DEBUG['LOG_PARSER']:
-            print(str(next_word))
+            gelf_message = self.get_gelf_line(timestamp, self.hostname, 'short', level, custom)
 
-        self.send_gelf_message(gelf_message)
+            if Registry.DEBUG['LOG_LINES']:
+                print(line)
+            if Registry.DEBUG['LOG_PARSER']:
+                print(str(next_word))
+
+            self.send_gelf_message(gelf_message)
 
     def error_log_consuming_loop(self):
         """ Consumer's main loop for the Error Log """
