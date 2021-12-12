@@ -34,7 +34,7 @@ class Consumer:
     sourcelog_path = None
     # Log file handler, watched
     sourcelog_handler = None
-    # last read line
+    # Past read line
     sourcelog_last_position = None
 
     # Last unsent GELF message
