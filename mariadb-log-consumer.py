@@ -274,7 +274,6 @@ class Consumer:
             timestamp = int(self.time.mktime(date_time))
 
             # to increase format changes resilience, remove brackets and make uppercase
-            # but then set to UNKNOWN if not recognised
             level = level          \
                 .replace('[', '')  \
                 .replace(']', '')  \
