@@ -19,6 +19,19 @@ class GELF_message:
     ##  Methods
     ##  =======
 
+    def _get_level(self, level):
+        """ Given a string that represents a severity level, return the corresponding GELF level.
+            If the level is not recognised, return 'UNKNOWN'.
+        """
+        if level == 'ERROR':
+            return '3'
+        elif level == 'WARNING':
+            return '4'
+        elif level == 'NOTE':
+            return '6'
+        else:
+            return 'UNKNOWN'
+
     def get_field(self, key, value):
         """ Compose a single key/value couple in a GELF line"""
         value = value.replace('\\', '\\\\')
@@ -54,7 +67,7 @@ class GELF_message:
         # Same levels as syslog:
         # 0=Emergency, 1=Alert, 2=Critical, 3=Error, 4=Warning, 5=Notice, 6=Informational, 7=Debug
         # https://docs.delphix.com/docs534/system-administration/system-monitoring/setting-syslog-preferences/severity-levels-for-syslog-messages
-        message += ',' + self.get_field('level', level)
+        message += ',' + self.get_field('level', self._get_level(level))
 
         # all custom fields (not mentioned in GELF specs)
         # must start with a '_'

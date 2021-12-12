@@ -279,14 +279,6 @@ class Consumer:
                 .replace('[', '')  \
                 .replace(']', '')  \
                 .upper()
-            if level == 'ERROR':
-                level = '3'
-            elif level == 'WARNING':
-                level = '4'
-            elif level == 'NOTE':
-                level = '6'
-            else:
-                level = 'UNKNOWN'
 
             custom = {
                 "text": message
