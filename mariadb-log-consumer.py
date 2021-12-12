@@ -290,7 +290,7 @@ class Consumer:
                     Registry.DEBUG,
                     self._GRAYLOG['GELF_version'],
                     timestamp,
-                    self.get_hostname(),
+                    self._hostname,
                     'short',
                     level,
                     custom
