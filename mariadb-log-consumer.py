@@ -42,7 +42,7 @@ class Consumer:
 
 
     # Necessary information to send messages to Graylog.
-    GRAYLOG = {
+    _GRAYLOG = {
         # Graylog host
         'host': None,
         # Graylog port
@@ -127,8 +127,8 @@ class Consumer:
         self.sourcelog_type = args.log_type.upper()
         self.sourcelog_path = str(args.log)
 
-        self.GRAYLOG['host'] = args.graylog_host
-        self.GRAYLOG['port'] = args.graylog_port
+        self._GRAYLOG['host'] = args.graylog_host
+        self._GRAYLOG['port'] = args.graylog_port
 
         try:
             self.log_handler = open(self.sourcelog_path, 'r', 0)
@@ -288,7 +288,7 @@ class Consumer:
 
             self.gelf_message = GELF_message(
                     Registry.DEBUG,
-                    self.GRAYLOG['GELF_version'],
+                    self._GRAYLOG['GELF_version'],
                     timestamp,
                     self.get_hostname(),
                     'short',
