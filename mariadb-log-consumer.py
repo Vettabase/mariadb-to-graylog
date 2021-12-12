@@ -37,6 +37,9 @@ class Consumer:
     # last read line
     sourcelog_last_position = None
 
+    # Last unsent GELF message
+    gelf_message = None
+
 
     # Necessary information to send messages to Graylog.
     GRAYLOG = {
@@ -283,7 +286,7 @@ class Consumer:
                 "text": message
             }
 
-            message = GELF_message(
+            self.gelf_message = GELF_message(
                     Registry.DEBUG,
                     self.GRAYLOG['GELF_version'],
                     timestamp,
@@ -298,13 +301,12 @@ class Consumer:
             if Registry.DEBUG['LOG_PARSER']:
                 print(str(next_word))
 
-            message.send()
-
     def error_log_consuming_loop(self):
         """ Consumer's main loop for the Error Log """
         source_line = self.log_handler.readline().rstrip()
         while (source_line):
             self.error_log_process_line(source_line)
+            self.gelf_message.send()
             source_line = self.log_handler.readline().rstrip()
         self.log_coordinates('READ')
 
