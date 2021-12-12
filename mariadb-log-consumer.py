@@ -54,7 +54,7 @@ class Consumer:
 
     # Misc
 
-    hostname = None
+    _hostname = None
 
 
     ##  Methods
@@ -136,9 +136,9 @@ class Consumer:
             abort(2, 'Could not open source log: ' + self.sourcelog_path)
 
         if (args.hostname):
-            self.hostname = args.hostname
+            self._hostname = args.hostname
         else:
-            self.hostname = self.get_hostname()
+            self._hostname = self.get_hostname()
 
         # cleanup the CLI parser
 
