@@ -308,6 +308,7 @@ class Consumer:
             self.error_log_process_line(source_line)
             self.gelf_message.send()
             source_line = self.log_handler.readline().rstrip()
+
         self.log_coordinates('READ')
 
 
