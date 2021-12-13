@@ -179,10 +179,10 @@ class Consumer:
         """ Get the position that we're currently reading """
         return str(self.log_handler.tell())
 
-    def log_coordinates(self, action):
-        """ Log last read coordinates and whether the last rows were sent or not """
+    def log_coordinates(self):
+        """ Log last consumed coordinates """
         self.sourcelog_last_position = self.get_current_position()
-        self.eventlog.append(action, self.get_current_position(), self.sourcelog_path)
+        self.eventlog.append(self.get_current_position(), self.sourcelog_path)
 
     def cleanup(self):
         """ Do the cleanup before execution terminates """
@@ -290,6 +290,7 @@ class Consumer:
             if self._message:
                 self._message.send()
                 self._message = None
+                self.log_coordinates()
 
             # Start to compose the new message
 
@@ -338,8 +339,7 @@ class Consumer:
         if self._message:
             self._message.send()
             self._message = None
-
-        self.log_coordinates('READ')
+            self.log_coordinates()
 
 
     ##  Slow Log
@@ -355,7 +355,6 @@ class Consumer:
         while (source_line):
             self.slow_log_process_line(source_line)
             source_line = self.log_handler.readline().rstrip()
-        self.log_coordinates('READ')
 
 
 def shutdown(sig, frame):

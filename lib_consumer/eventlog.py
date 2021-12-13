@@ -61,9 +61,9 @@ class Eventlog:
             except:
                 abort(3, 'Could not open or create eventlog: ' + eventlog_file)
 
-    def append(self, action, position, sourcefile):
+    def append(self, position, sourcefile):
         """ Append a line to the Eventlog """
-        self._handler.write(action + self.FIELD_SEPARATOR + position + self.FIELD_SEPARATOR + sourcefile + "\n")
+        self._handler.write(position + self.FIELD_SEPARATOR + sourcefile + "\n")
 
     def close(self):
         """ Close the Eventlog """
