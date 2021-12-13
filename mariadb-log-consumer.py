@@ -41,8 +41,8 @@ class Consumer:
     # Past read line
     sourcelog_last_position = None
 
-    # Last unsent GELF message
-    gelf_message = None
+    #: GELF message we're composing and then sending to Graylog
+    _message = None
 
     # Necessary information to send messages to Graylog.
     _GRAYLOG = {
@@ -53,7 +53,6 @@ class Consumer:
         # GELF version to use
         'GELF_version': '1.1'
     }
-
 
     # Misc
 
@@ -285,6 +284,15 @@ class Consumer:
             well_formed = False
 
         if well_formed:
+            # A new message starts with this line.
+            # If it is not a first (IE, a message was already composed)
+            # send the composed message.
+            if self._message:
+                self._message.send()
+                self._message = None
+
+            # Start to compose the new message
+
             date_time = self.datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S").timetuple()
             timestamp = int(self.time.mktime(date_time))
 
@@ -298,7 +306,7 @@ class Consumer:
                 "text": message
             }
 
-            self.gelf_message = GELF_message(
+            self._message = GELF_message(
                     Registry.DEBUG,
                     self._GRAYLOG['GELF_version'],
                     timestamp,
@@ -313,13 +321,22 @@ class Consumer:
             if Registry.DEBUG['LOG_PARSER']:
                 print(str(next_word))
 
+        # not well-formed
+        else:
+            if Registry.DEBUG['LOG_PARSER']:
+                print('Processing multiline message')
+            self._message.append_to_field(True, 'text', message)
+
     def error_log_consuming_loop(self):
         """ Consumer's main loop for the Error Log """
         source_line = self.log_handler.readline().rstrip()
         while (source_line):
             self.error_log_process_line(source_line)
-            self.gelf_message.send()
             source_line = self.log_handler.readline().rstrip()
+
+        if self._message:
+            self._message.send()
+            self._message = None
 
         self.log_coordinates('READ')
 
