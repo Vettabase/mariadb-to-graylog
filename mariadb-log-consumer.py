@@ -267,17 +267,17 @@ class Consumer:
         next_word = self.get_next_word(line, next_word['index'], True)
         message = next_word['word']
 
-        # @TODO: This is what we *should* do. Make it so.
         # First we'll try to get date and time, to find out if the row is well-formed.
         # If it is not, it is a continuation of the previous line, so we merge it
         # to its message.
-        # If it is, we can consider the previous line complete, so we send a GELF message.
+        # If it is, we can consider the previous line complete, so we send a GELF message
+        # (if a message is prepared; otherwise, it is the first line and we have nothing to send).
 
-        # We are doing this to zeropad the "hour" part.
-        # We could just zeropad time_part, but we want to be flexible in case we need to add
-        # a microsecond part.
         date_time = None
         try:
+            # We are doing this to zeropad the "hour" part.
+            # We could just zeropad time_part, but we want to be flexible in case we need to add
+            # a microsecond part.
             time_list = time_part.split(':')
             date_time = date_part + ' ' + time_list[0].zfill(2) + ':' + time_list[1].zfill(2) + ':' + time_list[2].zfill(2)
         except:
@@ -321,7 +321,8 @@ class Consumer:
             if Registry.DEBUG['LOG_PARSER']:
                 print(str(next_word))
 
-        # not well-formed
+        # Not well-formed. Append the line to the existing message
+        # _text property.
         else:
             if Registry.DEBUG['LOG_PARSER']:
                 print('Processing multiline message')
