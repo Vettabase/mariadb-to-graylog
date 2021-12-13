@@ -105,7 +105,7 @@ class GELF_message:
             if not is_first:
                 gelf_message = gelf_message + ','
             is_first = False
-            gelf_message = gelf_message + '"' + key + '":"' + self._message[key] + '"'
+            gelf_message = gelf_message + '"' + key + '":"' + self._message[key].replace('"', '\\"') + '"'
 
         gelf_message = gelf_message + '}'
 
