@@ -244,7 +244,6 @@ class Consumer:
             self.error_log_consuming_loop()
         else:
             self.slow_log_consuming_loop()
-        self.log_coordinates('READ')
 
 
     ##  Error Log
