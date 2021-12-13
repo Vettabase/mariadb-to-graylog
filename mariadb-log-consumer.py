@@ -27,6 +27,10 @@ class Consumer:
 
     # Eventlog instance
     eventlog = None
+    # Truncate the Eventlog before starting
+    _event_log_options = {
+        'truncate': False
+    }
 
     # Type of log to consume, uppercase. Allowed values: ERROR, SLOW
     sourcelog_type = None
@@ -39,7 +43,6 @@ class Consumer:
 
     # Last unsent GELF message
     gelf_message = None
-
 
     # Necessary information to send messages to Graylog.
     _GRAYLOG = {
@@ -112,6 +115,13 @@ class Consumer:
             '--hostname',
             help='Hostname as it will be sent to Graylog'
         )
+        # MariaDB tools use -P for the port they connect to
+        arg_parser.add_argument(
+            '-T',
+            '--truncate-eventlog',
+            action='store_true',
+            help='Truncate the eventlog before starting. Useful if the sourcelog was replaced.'
+        )
         args = arg_parser.parse_args()
 
         # validate arguments
@@ -140,13 +150,16 @@ class Consumer:
         else:
             self._hostname = self.get_hostname()
 
+        if args.truncate_eventlog:
+            self._event_log_options['truncate'] = True
+
         # cleanup the CLI parser
 
         args = None
         arg_parser = None
 
         self.register_signal_handlers()
-        self.eventlog = Eventlog()
+        self.eventlog = Eventlog(self._event_log_options)
         self.consuming_loop()
 
     def register_signal_handlers(self):

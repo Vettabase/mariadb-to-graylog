@@ -42,13 +42,24 @@ class Eventlog:
         """ Compose the file for a new eventlog """
         return self._EVENTLOG_PATH + '/' + self._EVENTLOG_NAME
 
-    def __init__(self):
+    def __init__(self, options):
         """ Open newest log file. If the file is changed (eg by logrotate) it closes and reopens it. """
         file = self._get_name()
-        try:
-            self._handler = open(file, 'a')
-        except:
-            abort(3, 'Could not open or create eventlog: ' + eventlog_file)
+
+        # Empty the file if required
+        if options['truncate']:
+            try:
+                self._handler = open(file, 'w')
+                self._handler.truncate(0)
+                self._handler.close()
+                self._handler = open(file, 'a')
+            except:
+                abort(3, 'Could not open or create eventlog: ' + eventlog_file)
+        else:
+            try:
+                self._handler = open(file, 'a')
+            except:
+                abort(3, 'Could not open or create eventlog: ' + eventlog_file)
 
     def append(self, action, position, sourcefile):
         """ Append a line to the Eventlog """
