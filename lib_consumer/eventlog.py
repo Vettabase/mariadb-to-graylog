@@ -54,12 +54,12 @@ class Eventlog:
                 self._handler.close()
                 self._handler = open(file, 'a')
             except:
-                abort(3, 'Could not open or create eventlog: ' + eventlog_file)
+                raise Exception('Could not open or create eventlog: ' + file)
         else:
             try:
                 self._handler = open(file, 'a')
             except:
-                abort(3, 'Could not open or create eventlog: ' + eventlog_file)
+                raise Exception('Could not open or create eventlog: ' + file)
 
     def append(self, position, sourcefile):
         """ Append a line to the Eventlog """
