@@ -183,7 +183,10 @@ class Consumer:
         arg_parser = None
 
         self.register_signal_handlers()
-        self.eventlog = Eventlog(self._event_log_options)
+        try:
+            self.eventlog = Eventlog(self._event_log_options)
+        except Exception as e:
+            abort(3, str(e))
         self.consuming_loop()
 
     def register_signal_handlers(self):
