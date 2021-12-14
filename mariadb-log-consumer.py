@@ -40,6 +40,9 @@ class Consumer:
     sourcelog_handler = None
     # Past read line
     sourcelog_last_position = None
+    # How many sourcelog entries will be processed.
+    # Zero or a negative value means process them all
+    _sourcelog_limit = None
 
     #: GELF message we're composing and then sending to Graylog
     _message = None
@@ -91,6 +94,14 @@ class Consumer:
             required=True,
             help='Path and name of the log file to consume'
         )
+        # --limit recalls SQL LIMIT
+        arg_parser.add_argument(
+            '--limit',
+            type=int,
+            default=-1,
+            help='Maximum number of sourcelog entries to process. Zero or ' +
+                'a negative value means process all sourcelog entries.'
+        )
         # MariaDB tools use -h for the host they connect to
         # but with ArgParse it's used for --help, we we use
         # uppercase -H instead
@@ -136,6 +147,7 @@ class Consumer:
 
         self.sourcelog_type = args.log_type.upper()
         self.sourcelog_path = str(args.log)
+        self._sourcelog_limit = args.limit - 1
 
         self._GRAYLOG['host'] = args.graylog_host
         self._GRAYLOG['port'] = args.graylog_port
@@ -336,6 +348,11 @@ class Consumer:
         while (source_line):
             self.error_log_process_line(source_line)
             source_line = self.log_handler.readline().rstrip()
+            # enforce --limit if it is > -1
+            if self._sourcelog_limit == 0:
+                break
+            elif self._sourcelog_limit > 0:
+                self._sourcelog_limit = self._sourcelog_limit - 1
 
         if self._message:
             self._message.send()
