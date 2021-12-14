@@ -114,7 +114,7 @@ class Consumer:
             '--hostname',
             help='Hostname as it will be sent to Graylog'
         )
-        # MariaDB tools use -P for the port they connect to
+        # -t in some tools stands for table, so we'll use -T.
         arg_parser.add_argument(
             '-T',
             '--truncate-eventlog',
