@@ -371,10 +371,10 @@ class Consumer:
             # read the next and decrement
             if self._sourcelog_offset > -1:
                 self._sourcelog_offset = self._sourcelog_offset - 1
-                source_line = self.log_handler.readline().rstrip()
+                source_line = self.log_handler.readline()
                 continue
             self.error_log_process_line(source_line)
-            source_line = self.log_handler.readline().rstrip()
+            source_line = self.log_handler.readline()
             # enforce --limit if it is > -1
             if self._sourcelog_limit == 0:
                 break
