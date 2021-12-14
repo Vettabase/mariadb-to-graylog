@@ -359,6 +359,12 @@ class Consumer:
 
     def error_log_consuming_loop(self):
         """ Consumer's main loop for the Error Log """
+
+        # if an offset was read from the Eventlog on start,
+        # skip to the offset
+        if self.eventlog.get_offset() is not None:
+            self.log_handler.seek(self.eventlog.get_offset())
+
         source_line = self.log_handler.readline().rstrip()
         while (source_line):
             # if _sourcelog_offset is not negative, skip this line,

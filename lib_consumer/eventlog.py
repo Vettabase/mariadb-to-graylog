@@ -4,6 +4,9 @@
 """ Includes the eventlog handler. """
 
 
+import os
+
+
 class Eventlog:
     """
         Eventlog handler.
@@ -33,6 +36,8 @@ class Eventlog:
 
     #: Eventlog file handler
     _handler = None
+    #: Initial offset
+    _offset = None
 
 
     ##  Methods
@@ -45,6 +50,18 @@ class Eventlog:
     def __init__(self, options):
         """ Open newest log file. If the file is changed (eg by logrotate) it closes and reopens it. """
         file = self._get_name()
+
+        # If the Eventlog exists and we're not going to truncate it,
+        # read the offset from the last line and store it in self._offset,
+        # so it can be read by the program.
+        if os.path.exists(file) and not options['truncate']:
+            self._handler = open(file, 'r')
+            last_line = self._handler.readline()
+            while last_line:
+                prev_line = last_line
+                last_line = self._handler.readline()
+            self._handler.close()
+            self._offset = int(prev_line.split(':')[0])
 
         # Empty the file if required
         if options['truncate']:
@@ -60,6 +77,10 @@ class Eventlog:
                 self._handler = open(file, 'a')
             except:
                 raise Exception('Could not open or create eventlog: ' + file)
+
+    def get_offset(self):
+        """ Return the Eventlog offset from the previous run """
+        return self._offset
 
     def append(self, position, sourcefile):
         """ Append a line to the Eventlog """
