@@ -114,6 +114,7 @@ class Consumer:
             '--hostname',
             help='Hostname as it will be sent to Graylog'
         )
+        # -t is used for --log-type. Also
         # -t in some tools stands for table, so we'll use -T.
         arg_parser.add_argument(
             '-T',
