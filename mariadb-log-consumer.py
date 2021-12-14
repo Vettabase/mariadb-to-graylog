@@ -40,9 +40,11 @@ class Consumer:
     sourcelog_handler = None
     # Past read line
     sourcelog_last_position = None
-    # How many sourcelog entries will be processed.
+    # How many sourcelog entries will be processed as a maximum.
     # Zero or a negative value means process them all
     _sourcelog_limit = None
+    # How many sourcelog entries will be skipped at the beginning.
+    _sourcelog_offset = None
 
     #: GELF message we're composing and then sending to Graylog
     _message = None
@@ -102,6 +104,15 @@ class Consumer:
             help='Maximum number of sourcelog entries to process. Zero or ' +
                 'a negative value means process all sourcelog entries.'
         )
+        # --offset recalls SQL LIMIT.
+        # Since --limit doesn't have a short version, --offset doesn't neither.
+        arg_parser.add_argument(
+            '--offset',
+            type=int,
+            default=-1,
+            help='Number of sourcelog entries to skip at the beginning. ' +
+                'Zero or a negative value means skip nothing.'
+        )
         # MariaDB tools use -h for the host they connect to
         # but with ArgParse it's used for --help, we we use
         # uppercase -H instead
@@ -148,6 +159,7 @@ class Consumer:
         self.sourcelog_type = args.log_type.upper()
         self.sourcelog_path = str(args.log)
         self._sourcelog_limit = args.limit - 1
+        self._sourcelog_offset = args.offset - 1
 
         self._GRAYLOG['host'] = args.graylog_host
         self._GRAYLOG['port'] = args.graylog_port
@@ -346,6 +358,12 @@ class Consumer:
         """ Consumer's main loop for the Error Log """
         source_line = self.log_handler.readline().rstrip()
         while (source_line):
+            # if _sourcelog_offset is not negative, skip this line,
+            # read the next and decrement
+            if self._sourcelog_offset > -1:
+                self._sourcelog_offset = self._sourcelog_offset - 1
+                source_line = self.log_handler.readline().rstrip()
+                continue
             self.error_log_process_line(source_line)
             source_line = self.log_handler.readline().rstrip()
             # enforce --limit if it is > -1
