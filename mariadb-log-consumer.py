@@ -27,8 +27,9 @@ class Consumer:
 
     # Eventlog instance
     eventlog = None
-    # Truncate the Eventlog before starting
+    #! Eventlog options distionary, to be passed to Eventlog
     _event_log_options = {
+        # Truncate the Eventlog before starting
         'truncate': False
     }
 
