@@ -306,6 +306,8 @@ class Consumer:
             # We are doing this to zeropad the "hour" part.
             # We could just zeropad time_part, but we want to be flexible in case we need to add
             # a microsecond part.
+            # @TODO: Handle rows in this format:
+            # 201030 12:40:21 [ERROR] mysqld got signal 6 ;
             time_list = time_part.split(':')
             date_time = date_part + ' ' + time_list[0].zfill(2) + ':' + time_list[1].zfill(2) + ':' + time_list[2].zfill(2)
         except:
