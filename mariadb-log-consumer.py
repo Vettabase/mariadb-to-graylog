@@ -25,17 +25,17 @@ class Consumer:
     ##  Members
     ##  =======
 
-    # By default this is True at the beginning of the program
-    # and means that it must "never" end.
-    # Set it to false later, if for some reason the program must
-    # gracefully stop.
+    #: By default this is True at the beginning of the program
+    #: and means that it must "never" end.
+    #: Set it to false later, if for some reason the program must
+    #: gracefully stop.
     _stop_consumer = True
-    # If we don't exit when we reach the sourcelog EOF,
-    # we'll wait this number of milliseconds before checking
-    # for new lines.
+    #: If we don't exit when we reach the sourcelog EOF,
+    #: we'll wait this number of milliseconds before checking
+    #: for new lines.
     _eof_wait = -1
 
-    # Eventlog instance
+    #: Eventlog instance
     _eventlog = None
     #! Eventlog options distionary, to be passed to Eventlog
     _event_log_options = {
@@ -43,22 +43,22 @@ class Consumer:
         'truncate': False
     }
 
-    # Type of log to consume, uppercase. Allowed values: ERROR, SLOW
+    #: Type of log to consume, uppercase. Allowed values: ERROR, SLOW
     _sourcelog_type = None
-    # Path and name of the log to consume
+    #: Path and name of the log to consume
     _sourcelog_path = None
-    # Past read line
+    #: Past read line
     _sourcelog_last_position = None
-    # How many sourcelog entries will be processed as a maximum.
-    # Zero or a negative value means process them all
+    #: How many sourcelog entries will be processed as a maximum.
+    #: Zero or a negative value means process them all
     _sourcelog_limit = None
-    # How many sourcelog entries will be skipped at the beginning.
+    #: How many sourcelog entries will be skipped at the beginning.
     _sourcelog_offset = None
 
     #: GELF message we're composing and then sending to Graylog
     _message = None
 
-    # Necessary information to send messages to Graylog.
+    #: Necessary information to send messages to Graylog.
     _GRAYLOG = {
         # Graylog host
         'host': None,
