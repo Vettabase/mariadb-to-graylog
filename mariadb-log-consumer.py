@@ -68,6 +68,11 @@ class Consumer:
     ##  =======
 
     def __init__(self):
+        """ The initialiser does nothing, so we have a complete instance before starting the real work. """
+        pass
+
+    def start(self):
+        """ Start consuming the sourcelog. """
         import argparse
 
         # TODO: We should do this, to prevent multiple consumers to run at the same time
@@ -448,5 +453,6 @@ def abort(return_code, message):
 
 if __name__ == '__main__':
     Registry.consumer = Consumer()
+    Registry.consumer.start()
 
 #EOF
