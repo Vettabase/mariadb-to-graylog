@@ -82,6 +82,11 @@ class Consumer:
 
         # parse CLI arguments
 
+        # Dictionary of arguments
+        args = None
+        # Object that handles CLI arguments
+        arg_parser = None
+
         arg_parser = argparse.ArgumentParser(
             prog = Registry.PROGRAM,
             version = Registry.VERSION,
