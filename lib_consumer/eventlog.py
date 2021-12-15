@@ -84,7 +84,7 @@ class Eventlog:
 
     def append(self, position, sourcefile):
         """ Append a line to the Eventlog """
-        self._handler.write(position + self.FIELD_SEPARATOR + sourcefile + "\n")
+        self._handler.write(position + self.FIELD_SEPARATOR + sourcefile + '\n')
 
     def close(self):
         """ Close the Eventlog """
