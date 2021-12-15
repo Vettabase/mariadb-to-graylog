@@ -26,7 +26,7 @@ class Consumer:
     ##  =======
 
     # Eventlog instance
-    eventlog = None
+    _eventlog = None
     #! Eventlog options distionary, to be passed to Eventlog
     _event_log_options = {
         # Truncate the Eventlog before starting
@@ -188,7 +188,7 @@ class Consumer:
 
         self.register_signal_handlers()
         try:
-            self.eventlog = Eventlog(self._event_log_options)
+            self._eventlog = Eventlog(self._event_log_options)
         except Exception as e:
             abort(3, str(e))
         self.consuming_loop()
@@ -214,11 +214,11 @@ class Consumer:
     def log_coordinates(self):
         """ Log last consumed coordinates """
         self._sourcelog_last_position = self.get_current_position()
-        self.eventlog.append(self.get_current_position(), self._sourcelog_path)
+        self._eventlog.append(self.get_current_position(), self._sourcelog_path)
 
     def cleanup(self):
         """ Do the cleanup before execution terminates """
-        self.eventlog.close()
+        self._eventlog.close()
 
 
     ##  Consumer Loop
@@ -395,8 +395,8 @@ class Consumer:
 
         # if an offset was read from the Eventlog on start,
         # skip to the offset
-        if self.eventlog.get_offset() is not None:
-            self.log_handler.seek(self.eventlog.get_offset())
+        if self._eventlog.get_offset() is not None:
+            self.log_handler.seek(self._eventlog.get_offset())
 
         source_line = self.log_handler.readline().rstrip()
         while (source_line):
