@@ -2,11 +2,17 @@
 
 
 """
-    A GELF message that can be created and sent.
+    Contains GELF_message, which represents a GELF message.
 """
 
 
 class GELF_message:
+    """ A GELF message that supports these operations:
+        * Creation, with standard and custom attributes;
+        * Append a string to an existing attribute;
+        * Send to Graylog.
+    """
+
     ##  Variables
     ##  =========
 
