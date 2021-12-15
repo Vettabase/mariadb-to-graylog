@@ -220,7 +220,7 @@ class Consumer:
     ##  Consumer Loop
     ##  =============
 
-    def get_next_word(self, line, offset=0, to_end=False):
+    def _get_next_word(self, line, offset=0, to_end=False):
         """ Generic method to get the next word from a line, or None """
         index = 0
         word = ''
@@ -280,38 +280,68 @@ class Consumer:
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
         well_formed = True
 
-        next_word = self.get_next_word(line)
+        next_word = self._get_next_word(line)
         date_part = next_word['word']
 
-        next_word = self.get_next_word(line, next_word['index'])
+        next_word = self._get_next_word(line, next_word['index'])
         time_part = next_word['word']
 
-        next_word = self.get_next_word(line, next_word['index'])
-        thread = next_word['word']
+        # We need to support the following line formats.
+        # Format 1:
+        # 2019-11-01 16:10:48 0 [Note] WSREP: Read nil XID from storage engines, skipping position init
+        # Format 2:
+        # 201030 12:40:21 [ERROR] mysqld got signal 6 ;
 
-        next_word = self.get_next_word(line, next_word['index'])
-        level = next_word['word']
-
-        next_word = self.get_next_word(line, next_word['index'], True)
-        message = next_word['word']
-
-        # First we'll try to get date and time, to find out if the row is well-formed.
-        # If it is not, it is a continuation of the previous line, so we merge it
-        # to its message.
-        # If it is, we can consider the previous line complete, so we send a GELF message
-        # (if a message is prepared; otherwise, it is the first line and we have nothing to send).
-
+        # Assigning meaningful values to these variables will fail if
+        # no known format is detected
+        time_list = None
         date_time = None
+        timestamp = None
+
         try:
+            # First we'll try to get date and time, to find out if the row is well-formed.
+            # If it is not, it is a continuation of the previous line, so we merge it
+            # to its message.
+            # If it is, we can consider the previous line complete, so we send a GELF message
+            # (if a message is prepared; otherwise, it is the first line and we have nothing to send).
+
+            # Format 1
             # We are doing this to zeropad the "hour" part.
             # We could just zeropad time_part, but we want to be flexible in case we need to add
             # a microsecond part.
-            # @TODO: Handle rows in this format:
-            # 201030 12:40:21 [ERROR] mysqld got signal 6 ;
             time_list = time_part.split(':')
             date_time = date_part + ' ' + time_list[0].zfill(2) + ':' + time_list[1].zfill(2) + ':' + time_list[2].zfill(2)
-        except:
-            well_formed = False
+
+            date_time = self.datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S").timetuple()
+            timestamp = int(self.time.mktime(date_time))
+
+            next_word = self._get_next_word(line, next_word['index'])
+            thread = next_word['word']
+
+            next_word = self._get_next_word(line, next_word['index'])
+            level = next_word['word']
+
+            next_word = self._get_next_word(line, next_word['index'], True)
+            message = next_word['word']
+        except (ValueError, IndexError) as e:
+            try:
+                # Format 2
+                time_list = time_part.split(':')
+                date_time = date_part + ' ' + time_list[0].zfill(2) + ':' + time_list[1].zfill(2) + ':' + time_list[2].zfill(2)
+
+                date_time = self.datetime.datetime.strptime(date_time, "%y%m%d %H:%M:%S").timetuple()
+                timestamp = int(self.time.mktime(date_time))
+
+                next_word = self._get_next_word(line, next_word['index'])
+                level = next_word['word']
+
+                next_word = self._get_next_word(line, next_word['index'], True)
+                message = next_word['word']
+            except (ValueError, IndexError) as e:
+                # No known format was detected
+                well_formed = False
+                next_word = self._get_next_word(line, offset=0, to_end=True)
+                message = next_word['word']
 
         if well_formed:
             # A new message starts with this line.
@@ -323,9 +353,6 @@ class Consumer:
                 self.log_coordinates()
 
             # Start to compose the new message
-
-            date_time = self.datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S").timetuple()
-            timestamp = int(self.time.mktime(date_time))
 
             # to increase format changes resilience, remove brackets and make uppercase
             level = level          \
