@@ -13,7 +13,7 @@ class GELF_message:
     #: GELF message in string form.
     _message = { }
     #: Debug flags for additional output.
-    debug = None
+    debug = { }
 
 
     ##  Constants
