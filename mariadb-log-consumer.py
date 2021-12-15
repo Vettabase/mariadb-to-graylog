@@ -33,13 +33,11 @@ class Consumer:
     }
 
     # Type of log to consume, uppercase. Allowed values: ERROR, SLOW
-    sourcelog_type = None
+    _sourcelog_type = None
     # Path and name of the log to consume
-    sourcelog_path = None
-    # Log file handler, watched
-    sourcelog_handler = None
+    _sourcelog_path = None
     # Past read line
-    sourcelog_last_position = None
+    _sourcelog_last_position = None
     # How many sourcelog entries will be processed as a maximum.
     # Zero or a negative value means process them all
     _sourcelog_limit = None
@@ -161,8 +159,8 @@ class Consumer:
 
         # copy arguments into object members
 
-        self.sourcelog_type = args.log_type.upper()
-        self.sourcelog_path = str(args.log)
+        self._sourcelog_type = args.log_type.upper()
+        self._sourcelog_path = str(args.log)
         self._sourcelog_limit = args.limit - 1
         self._sourcelog_offset = args.offset - 1
 
@@ -170,9 +168,9 @@ class Consumer:
         self._GRAYLOG['port'] = args.graylog_port
 
         try:
-            self.log_handler = open(self.sourcelog_path, 'r', 0)
+            self.log_handler = open(self._sourcelog_path, 'r', 0)
         except:
-            abort(2, 'Could not open source log: ' + self.sourcelog_path)
+            abort(2, 'Could not open source log: ' + self._sourcelog_path)
 
         if (args.hostname):
             self._hostname = args.hostname
@@ -214,8 +212,8 @@ class Consumer:
 
     def log_coordinates(self):
         """ Log last consumed coordinates """
-        self.sourcelog_last_position = self.get_current_position()
-        self.eventlog.append(self.get_current_position(), self.sourcelog_path)
+        self._sourcelog_last_position = self.get_current_position()
+        self.eventlog.append(self.get_current_position(), self._sourcelog_path)
 
     def cleanup(self):
         """ Do the cleanup before execution terminates """
@@ -270,9 +268,9 @@ class Consumer:
 
     def consuming_loop(self):
         """ Consumer's main loop, in which we read next lines if available, or wait for more lines to be written.
-            Calls a specific method based on sourcelog_type.
+            Calls a specific method based on _sourcelog_type.
         """
-        if self.sourcelog_type == 'ERROR':
+        if self._sourcelog_type == 'ERROR':
             self.error_log_consuming_loop()
         else:
             self.slow_log_consuming_loop()
