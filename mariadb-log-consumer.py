@@ -176,7 +176,7 @@ class Consumer:
         if (args.hostname):
             self._hostname = args.hostname
         else:
-            self._hostname = self.get_hostname()
+            self._hostname = self._get_hostname()
 
         if args.truncate_eventlog:
             self._event_log_options['truncate'] = True
@@ -192,23 +192,23 @@ class Consumer:
             abort(3, str(e))
         self.consuming_loop()
 
-    def get_timestamp(self):
+    def _get_timestamp(self):
         """ Return UNIX timestamp (not decimals) """
         return str( int ( self.time.time() ) )
 
-    def get_hostname(self):
+    def _get_hostname(self):
         """ Used to set the hostname for the first time """
         import socket
         return socket.gethostname()
 
-    def get_current_position(self):
+    def _get_current_position(self):
         """ Get the position that we're currently reading """
         return str(self.log_handler.tell())
 
-    def log_coordinates(self):
+    def _log_coordinates(self):
         """ Log last consumed coordinates """
-        self._sourcelog_last_position = self.get_current_position()
-        self._eventlog.append(self.get_current_position(), self._sourcelog_path)
+        self._sourcelog_last_position = self._get_current_position()
+        self._eventlog.append(self._get_current_position(), self._sourcelog_path)
 
     def cleanup(self):
         """ Do the cleanup before execution terminates """
@@ -348,7 +348,7 @@ class Consumer:
             if self._message:
                 self._message.send()
                 self._message = None
-                self.log_coordinates()
+                self._log_coordinates()
 
             # Start to compose the new message
 
@@ -411,7 +411,7 @@ class Consumer:
         if self._message:
             self._message.send()
             self._message = None
-            self.log_coordinates()
+            self._log_coordinates()
 
 
     ##  Slow Log
