@@ -186,17 +186,11 @@ class Consumer:
         args = None
         arg_parser = None
 
-        self.register_signal_handlers()
         try:
             self._eventlog = Eventlog(self._event_log_options)
         except Exception as e:
             abort(3, str(e))
         self.consuming_loop()
-
-    def register_signal_handlers(self):
-        """ Register system signal handlers """
-        signal.signal(signal.SIGINT, shutdown)
-        signal.signal(signal.SIGTERM, shutdown)
 
     def get_timestamp(self):
         """ Return UNIX timestamp (not decimals) """
@@ -435,6 +429,11 @@ class Consumer:
             source_line = self.log_handler.readline().rstrip()
 
 
+def register_signal_handlers():
+    """ Register system signal handlers """
+    signal.signal(signal.SIGINT, shutdown)
+    signal.signal(signal.SIGTERM, shutdown)
+
 def shutdown(sig, frame):
     """ Terminate the program normally """
     Registry.consumer.cleanup()
@@ -452,6 +451,7 @@ def abort(return_code, message):
 
 if __name__ == '__main__':
     Registry.consumer = Consumer()
+    register_signal_handlers()
     Registry.consumer.start()
 
 #EOF
