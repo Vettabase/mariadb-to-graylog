@@ -25,6 +25,16 @@ class Consumer:
     ##  Members
     ##  =======
 
+    # By default this is True at the beginning of the program
+    # and means that it must "never" end.
+    # Set it to false later, if for some reason the program must
+    # gracefully stop.
+    _stop_consumer = True
+    # If we don't exit when we reach the sourcelog EOF,
+    # we'll wait this number of milliseconds before checking
+    # for new lines.
+    _eof_wait = -1
+
     # Eventlog instance
     _eventlog = None
     #! Eventlog options distionary, to be passed to Eventlog
@@ -111,7 +121,8 @@ class Consumer:
             type=int,
             default=-1,
             help='Maximum number of sourcelog entries to process. Zero or ' +
-                'a negative value means process all sourcelog entries.'
+                'a negative value means process all sourcelog entries.' +
+                'Implies --stop-never.'
         )
         # --offset recalls SQL LIMIT.
         # Since --limit doesn't have a short version, --offset doesn't neither.
@@ -121,6 +132,22 @@ class Consumer:
             default=-1,
             help='Number of sourcelog entries to skip at the beginning. ' +
                 'Zero or a negative value means skip nothing.'
+        )
+        # --stop-never is from mysqlbinlog
+        # We have --stop=never, --stop=eof
+        arg_parser.add_argument(
+            '--stop',
+            choices=['never', 'eof'],
+            default='never',
+            help='End the program never when it reaches the sourcelog EOF.'
+        )
+        # --*-wait is MariaDB stle. eof refers to --stop-eof.
+        arg_parser.add_argument(
+            '--eof-wait',
+            type=int,
+            default=1000,
+            help='Number of milliseconds to wait after reaching the sourcelog' +
+                'end, before checking if there are new contents.'
         )
         # MariaDB tools use -h for the host they connect to
         # but with ArgParse it's used for --help, we we use
@@ -169,6 +196,12 @@ class Consumer:
         self._sourcelog_path = str(args.log)
         self._sourcelog_limit = args.limit - 1
         self._sourcelog_offset = args.offset - 1
+        # --limit implies a program stop
+        if args.limit > -1:
+            self._stop = 'limit'
+        else:
+            self._stop = args.stop
+        self._eof_wait = args.eof_wait
 
         self._GRAYLOG['host'] = args.graylog_host
         self._GRAYLOG['port'] = args.graylog_port
@@ -397,26 +430,35 @@ class Consumer:
         if self._eventlog.get_offset() is not None:
             self.log_handler.seek(self._eventlog.get_offset())
 
-        source_line = self.log_handler.readline().rstrip()
-        while (source_line):
-            # if _sourcelog_offset is not negative, skip this line,
-            # read the next and decrement
-            if self._sourcelog_offset > -1:
-                self._sourcelog_offset = self._sourcelog_offset - 1
-                source_line = self.log_handler.readline()
-                continue
-            self.error_log_process_line(source_line)
-            source_line = self.log_handler.readline()
-            # enforce --limit if it is > -1
-            if self._sourcelog_limit == 0:
-                break
-            elif self._sourcelog_limit > 0:
-                self._sourcelog_limit = self._sourcelog_limit - 1
+        while True:
 
-        if self._message:
-            self._message.send()
-            self._message = None
-            self._log_coordinates()
+            source_line = self.log_handler.readline().rstrip()
+            while (source_line):
+                # if _sourcelog_offset is not negative, skip this line,
+                # read the next and decrement
+                if self._sourcelog_offset > -1:
+                    self._sourcelog_offset = self._sourcelog_offset - 1
+                    source_line = self.log_handler.readline()
+                    continue
+                self.error_log_process_line(source_line)
+                source_line = self.log_handler.readline()
+                # enforce --limit if it is > -1
+                if self._sourcelog_limit == 0:
+                    break
+                elif self._sourcelog_limit > 0:
+                    self._sourcelog_limit = self._sourcelog_limit - 1
+
+            if self._message:
+                self._message.send()
+                self._message = None
+                self._log_coordinates()
+
+            # We reached sourcelog EOF.
+            # Depening on _stop, we exit the loop (and then the program)
+            # or we wait a given interval and repeat the loop.
+            if self._stop == 'limit' or self._stop == 'eof':
+                break
+            self.time.sleep(self._eof_wait / 1000)
 
 
     ##  Slow Log
