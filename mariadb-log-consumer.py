@@ -316,6 +316,20 @@ class Consumer:
             abort(1, 'Malformed next_word dictionary: ' + str(next_word))
         return word
 
+    def _process_message(self):
+        """ Send the message and log the coordinates.
+            Prevent the program to be interrupted just before sending
+            the message and release the protection after logging.
+        """
+        self._can_be_interrupted = False
+        self._message.send()
+        self._message = None
+        self._log_coordinates()
+        self._can_be_interrupted = True
+
+        if self._should_stop:
+            self.cleanup()
+
     def consuming_loop(self):
         """ Consumer's main loop, in which we read next lines if available, or wait for more lines to be written.
             Calls a specific method based on _sourcelog_type.
@@ -401,9 +415,7 @@ class Consumer:
             # If it is not a first (IE, a message was already composed)
             # send the composed message.
             if self._message:
-                self._message.send()
-                self._message = None
-                self._log_coordinates()
+                self._process_message()
 
             # Start to compose the new message
 
@@ -465,15 +477,8 @@ class Consumer:
                 elif self._sourcelog_limit > 0:
                     self._sourcelog_limit = self._sourcelog_limit - 1
 
-            # Send the message and log the coordinates.
-            # Prevent the program to be interrupted just before sending
-            # the message and release the protection after logging.
             if self._message:
-                self._can_be_interrupted = False
-                self._message.send()
-                self._message = None
-                self._log_coordinates()
-                self._can_be_interrupted = True
+                self._process_message()
 
             # We reached sourcelog EOF.
             # Depening on _stop, we exit the loop (and then the program)
