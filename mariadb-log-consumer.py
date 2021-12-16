@@ -141,8 +141,7 @@ class Consumer:
         # We have --stop=never, --stop=eof
         arg_parser.add_argument(
             '--stop',
-            choices=['never', 'eof'],
-            default='never',
+            default=None,
             help='End the program never when it reaches the sourcelog EOF.'
         )
         # --*-wait is MariaDB stle. eof refers to --stop-eof.
@@ -191,6 +190,11 @@ class Consumer:
         if args.log.find(Eventlog.FIELD_SEPARATOR) > -1:
             abort(2, 'The source log name and path cannot contain the character: "' + Eventlog.FIELD_SEPARATOR + '"')
 
+        if args.limit > -1 and (args.stop is not None and args.stop != 'limit'):
+            abort(2, 'If --limit is > -1, --stop is set to \'limit\'')
+        elif args.limit < 0 and args.stop == 'limit':
+            abort(2, '--stop=limit is specified, but --limit is not specified')
+
         if (args.graylog_host and not args.graylog_port) or (args.graylog_port and not args.graylog_host):
             abort(2, 'Set both --graylog-host and --graylog-port, or none of them')
 
@@ -210,8 +214,11 @@ class Consumer:
         # --limit implies a program stop
         if args.limit > -1:
             self._stop = 'limit'
-        else:
+        elif args.stop is not None:
             self._stop = args.stop
+        else:
+            # default when --limit is absent
+            self._stop = 'never'
         self._eof_wait = args.eof_wait
 
         self._GRAYLOG['host'] = args.graylog_host
@@ -512,7 +519,10 @@ class Consumer:
 def abort(return_code, message):
     """ Abort the program with specified return code and error message """
     if Registry.consumer:
-        Registry.consumer.cleanup()
+        try:
+            Registry.consumer.cleanup()
+        except:
+            pass
     if message:
         print(message)
     sys.exit(return_code)
