@@ -239,8 +239,8 @@ class Consumer:
 
         # cleanup the CLI parser
 
-        args = None
-        arg_parser = None
+        del args
+        del arg_parser
 
         try:
             self._eventlog = Eventlog(self._event_log_options)
