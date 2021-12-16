@@ -34,6 +34,11 @@ class Consumer:
     #: we'll wait this number of milliseconds before checking
     #: for new lines.
     _eof_wait = -1
+    #: If set to False, signals cannot interrupt the program.
+    _can_be_interrupted = True
+    #: If set to True, the program will exit as soon as it is safe
+    #: to do so.
+    _should_stop = False
 
     #: Eventlog instance
     _eventlog = None
@@ -228,6 +233,10 @@ class Consumer:
             self._eventlog = Eventlog(self._event_log_options)
         except Exception as e:
             abort(3, str(e))
+
+        signal.signal(signal.SIGINT, self.handle_signal)
+        signal.signal(signal.SIGTERM, self.handle_signal)
+
         self.consuming_loop()
 
     def _get_timestamp(self):
@@ -249,8 +258,16 @@ class Consumer:
         self._eventlog.append(self._get_current_position(), self._sourcelog_path)
 
     def cleanup(self):
-        """ Do the cleanup before execution terminates """
+        """ Do the cleanup and terminate program execution """
         self._eventlog.close()
+        sys.exit(0)
+
+    def handle_signal(self, signum, frame):
+        """ Handle signals to avoid that the program is interrupted when it shouldn't be. """
+        if self._can_be_interrupted:
+            self.cleanup()
+        else:
+            self._should_stop = True
 
 
     ##  Consumer Loop
@@ -448,10 +465,15 @@ class Consumer:
                 elif self._sourcelog_limit > 0:
                     self._sourcelog_limit = self._sourcelog_limit - 1
 
+            # Send the message and log the coordinates.
+            # Prevent the program to be interrupted just before sending
+            # the message and release the protection after logging.
             if self._message:
+                self._can_be_interrupted = False
                 self._message.send()
                 self._message = None
                 self._log_coordinates()
+                self._can_be_interrupted = True
 
             # We reached sourcelog EOF.
             # Depening on _stop, we exit the loop (and then the program)
@@ -476,17 +498,6 @@ class Consumer:
             source_line = self.log_handler.readline().rstrip()
 
 
-def register_signal_handlers():
-    """ Register system signal handlers """
-    signal.signal(signal.SIGINT, shutdown)
-    signal.signal(signal.SIGTERM, shutdown)
-
-def shutdown(sig, frame):
-    """ Terminate the program normally """
-    Registry.consumer.cleanup()
-    sys.exit(0)
-
-
 def abort(return_code, message):
     """ Abort the program with specified return code and error message """
     if Registry.consumer:
@@ -498,7 +509,6 @@ def abort(return_code, message):
 
 if __name__ == '__main__':
     Registry.consumer = Consumer()
-    register_signal_handlers()
     Registry.consumer.start()
 
 #EOF
