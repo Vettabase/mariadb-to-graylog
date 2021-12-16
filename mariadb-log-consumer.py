@@ -522,6 +522,8 @@ class Consumer:
 def abort(return_code, message):
     """ Abort the program with specified return code and error message """
     if Registry.consumer:
+        # When an anomaly occurs, the consumer object
+        # may not have been created yet
         try:
             Registry.consumer.cleanup()
         except:
