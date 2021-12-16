@@ -110,7 +110,6 @@ class Consumer:
         arg_parser.add_argument(
             '-t',
             '--log-type',
-            choices=['error', 'slow'],
             required=True,
             help='Type of log to consume'
         )
@@ -197,7 +196,13 @@ class Consumer:
 
         # copy arguments into object members
 
-        self._sourcelog_type = args.log_type.upper()
+        log_type = args.log_type.upper()
+        if log_type == 'ERROR' or log_type == 'ERRORLOG':
+            self._sourcelog_type = 'ERROR'
+        elif log_type == 'SLOW' or log_type == 'SLOWLOG':
+            self._sourcelog_type = 'SLOW'
+        else:
+            abort(2, 'Invalid value for --log-type')
         self._sourcelog_path = str(args.log)
         self._sourcelog_limit = args.limit - 1
         self._sourcelog_offset = args.offset - 1
