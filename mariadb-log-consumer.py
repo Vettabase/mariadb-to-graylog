@@ -203,6 +203,7 @@ class Consumer:
             self._sourcelog_type = 'SLOW'
         else:
             abort(2, 'Invalid value for --log-type')
+        del log_type
         self._sourcelog_path = str(args.log)
         self._sourcelog_limit = args.limit - 1
         self._sourcelog_offset = args.offset - 1
