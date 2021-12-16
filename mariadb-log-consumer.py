@@ -229,7 +229,7 @@ class Consumer:
         except:
             abort(2, 'Could not open source log: ' + self._sourcelog_path)
 
-        if (args.hostname):
+        if args.hostname:
             self._hostname = args.hostname
         else:
             self._hostname = self._get_hostname()
