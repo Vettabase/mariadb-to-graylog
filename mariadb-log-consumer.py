@@ -423,6 +423,9 @@ class Consumer:
                 next_word = self._get_next_word(line, offset=0, to_end=True)
                 message = next_word['word']
 
+        del time_list
+        del date_time
+
         if well_formed:
             # A new message starts with this line.
             # If it is not a first (IE, a message was already composed)
