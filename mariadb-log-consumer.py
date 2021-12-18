@@ -541,7 +541,7 @@ class Consumer:
         while True:
 
             source_line = self.log_handler.readline().rstrip()
-            while (source_line):
+            while source_line:
                 in_sequence = True
                 if self._message_wait:
                     self.time.sleep(self._message_wait / 1000)
