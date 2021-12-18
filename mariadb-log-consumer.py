@@ -25,6 +25,17 @@ class Consumer:
     ##  Members
     ##  =======
 
+    # The lock file is stored here.
+    _LOCK_FILE_PATH = '/tmp'
+    #: Identifies a run of this program.
+    _label = 'default'
+    #: Lock file handler.
+    #: We open this file with an exclusive lock to make sure only
+    #: one istance of the consumer is running for a given label.
+    _lock_file = None
+    # Path and name of the lock file.
+    _lock_file_name = None
+
     #: By default this is True at the beginning of the program
     #: and means that it must "never" end.
     #: Set it to false later, if for some reason the program must
@@ -185,6 +196,12 @@ class Consumer:
         )
         args = arg_parser.parse_args()
 
+        self._lock_file_name = self._LOCK_FILE_PATH + '/' + self._label
+        try:
+            self._lock_file = self.os.open(self._lock_file_name, self.os.O_CREAT | self.os.O_EXCL | self.os.O_RDWR)
+        except OSError:
+            abort(2, 'Lock file exists or cannot be created: ' + self._lock_file_name)
+
         # validate arguments
 
         if args.log.find(Eventlog.FIELD_SEPARATOR) > -1:
@@ -273,6 +290,8 @@ class Consumer:
     def cleanup(self):
         """ Do the cleanup and terminate program execution """
         self._eventlog.close()
+        self.os.close(self._lock_file)
+        self.os.unlink(self._lock_file_name)
         sys.exit(0)
 
     def handle_signal(self, signum, frame):
