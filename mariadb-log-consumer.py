@@ -196,12 +196,6 @@ class Consumer:
         )
         args = arg_parser.parse_args()
 
-        self._lock_file_name = self._LOCK_FILE_PATH + '/' + self._label
-        try:
-            self._lock_file = self.os.open(self._lock_file_name, self.os.O_CREAT | self.os.O_EXCL | self.os.O_RDWR)
-        except OSError:
-            abort(2, 'Lock file exists or cannot be created: ' + self._lock_file_name)
-
         # validate arguments
 
         if args.log.find(Eventlog.FIELD_SEPARATOR) > -1:
@@ -264,8 +258,15 @@ class Consumer:
         except Exception as e:
             abort(3, str(e))
 
+        # Note: we want to start handling signals before creating the lock file
         signal.signal(signal.SIGINT, self.handle_signal)
         signal.signal(signal.SIGTERM, self.handle_signal)
+
+        self._lock_file_name = self._LOCK_FILE_PATH + '/' + self._label
+        try:
+            self._lock_file = self.os.open(self._lock_file_name, self.os.O_CREAT | self.os.O_EXCL | self.os.O_RDWR)
+        except OSError:
+            abort(2, 'Lock file exists or cannot be created: ' + self._lock_file_name)
 
         self.consuming_loop()
 
