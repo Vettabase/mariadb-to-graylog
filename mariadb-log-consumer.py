@@ -122,13 +122,13 @@ class Consumer:
             '-t',
             '--log-type',
             required=True,
-            help='Type of log to consume'
+            help='Type of log to consume.'
         )
         arg_parser.add_argument(
             '-l',
             '--log',
             required=True,
-            help='Path and name of the log file to consume'
+            help='Path and name of the log file to consume.'
         )
         # --limit recalls SQL LIMIT
         arg_parser.add_argument(
@@ -177,21 +177,21 @@ class Consumer:
             '-H',
             '--graylog-host',
             default='',
-            help='Graylog hostname'
+            help='Graylog hostname.'
         )
         # MariaDB tools use -P for the port they connect to
         arg_parser.add_argument(
             '-P',
             '--graylog-port',
             type=int,
-            help='Graylog UDP port'
+            help='Graylog UDP port.'
         )
         # Advertised name of the local host.
         # Shortened as -n because -h is already taken
         arg_parser.add_argument(
             '-n',
             '--hostname',
-            help='Hostname as it will be sent to Graylog'
+            help='Hostname as it will be sent to Graylog.'
         )
         # -t is used for --log-type. Also
         # -t in some tools stands for table, so we'll use -T.
