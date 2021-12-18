@@ -536,6 +536,9 @@ class Consumer:
         if self._eventlog.get_offset() is not None:
             self.log_handler.seek(self._eventlog.get_offset())
 
+        # set to True when repeating a loop,
+        # to indicate that we may need to wait _message_wait msecs
+        # to avoid processing messages to quickly
         in_sequence = False
 
         while True:
