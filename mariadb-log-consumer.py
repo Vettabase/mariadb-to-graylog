@@ -220,10 +220,14 @@ class Consumer:
         if args.log.find(Eventlog.FIELD_SEPARATOR) > -1:
             abort(2, 'The source log name and path cannot contain the character: "' + Eventlog.FIELD_SEPARATOR + '"')
 
-        if args.limit > -1 and (args.stop is not None and args.stop != 'limit'):
+        args.stop = args.stop.upper()
+        if args.limit > -1 and (args.stop is not None and args.stop != 'LIMIT'):
             abort(2, 'If --limit is > -1, --stop is set to \'limit\'')
-        elif args.limit < 0 and args.stop == 'limit':
+        elif args.limit < 0 and args.stop == 'LIMIT':
             abort(2, '--stop=limit is specified, but --limit is not specified')
+        elif args.stop:
+            if args.stop not in ('NEVER', 'EOF', 'LIMIT'):
+                abort(2, 'Invalid value for --stop: ' + args.stop)
 
         if args.label.find('/') > -1 or args.label.find('\\') > -1:
             abort(2, 'A label cannot contain slashes or backslashes')
@@ -246,12 +250,12 @@ class Consumer:
         self._sourcelog_offset = args.offset - 1
         # --limit implies a program stop
         if args.limit > -1:
-            self._stop = 'limit'
+            self._stop = 'LIMIT'
         elif args.stop is not None:
             self._stop = args.stop
         else:
             # default when --limit is absent
-            self._stop = 'never'
+            self._stop = 'NEVER'
         self._eof_wait = args.eof_wait
         if args.label:
             self._label = args.label
@@ -545,7 +549,7 @@ class Consumer:
             # We reached sourcelog EOF.
             # Depening on _stop, we exit the loop (and then the program)
             # or we wait a given interval and repeat the loop.
-            if self._stop == 'limit' or self._stop == 'eof':
+            if self._stop == 'LIMIT' or self._stop == 'EOF':
                 break
             self.time.sleep(self._eof_wait / 1000)
 
