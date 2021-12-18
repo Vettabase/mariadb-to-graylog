@@ -572,7 +572,8 @@ class Consumer:
             # or we wait a given interval and repeat the loop.
             if self._stop == 'LIMIT' or self._stop == 'EOF':
                 break
-            self.time.sleep(self._eof_wait / 1000)
+            if self._eof_wait > 0:
+                self.time.sleep(self._eof_wait / 1000)
 
         self.cleanup()
 
