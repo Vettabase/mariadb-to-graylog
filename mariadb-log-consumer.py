@@ -163,6 +163,13 @@ class Consumer:
             help='Number of milliseconds to wait after reaching the sourcelog' +
                 'end, before checking if there are new contents.'
         )
+        arg_parser.add_argument(
+            '--label',
+            default='',
+            help='ID for the program execution. To calls with different ' +
+                'IDs are allowed to run simultaneously. ' +
+                'Default: same value as --log-type.'
+        )
         # MariaDB tools use -h for the host they connect to
         # but with ArgParse it's used for --help, we we use
         # uppercase -H instead
@@ -206,6 +213,9 @@ class Consumer:
         elif args.limit < 0 and args.stop == 'limit':
             abort(2, '--stop=limit is specified, but --limit is not specified')
 
+        if args.label.find('/') > -1 or args.label.find('\\') > -1:
+            abort(2, 'A label cannot contain slashes or backslashes')
+
         if (args.graylog_host and not args.graylog_port) or (args.graylog_port and not args.graylog_host):
             abort(2, 'Set both --graylog-host and --graylog-port, or none of them')
 
@@ -231,6 +241,10 @@ class Consumer:
             # default when --limit is absent
             self._stop = 'never'
         self._eof_wait = args.eof_wait
+        if args.label:
+            self._label = args.label
+        else:
+            self._label = args.log_type
 
         self._GRAYLOG['host'] = args.graylog_host
         self._GRAYLOG['port'] = args.graylog_port
