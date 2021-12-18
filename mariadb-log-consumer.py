@@ -280,7 +280,7 @@ class Consumer:
         try:
             self._lock_file = self.os.open(self._lock_file_name, self.os.O_CREAT | self.os.O_EXCL | self.os.O_RDWR)
         except OSError:
-            abort(2, 'Lock file exists or cannot be created: ' + self._lock_file_name)
+            abort(3, 'Lock file exists or cannot be created: ' + self._lock_file_name)
 
         self.consuming_loop()
 
