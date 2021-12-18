@@ -553,6 +553,8 @@ class Consumer:
                 break
             self.time.sleep(self._eof_wait / 1000)
 
+        self.cleanup()
+
 
     ##  Slow Log
     ##  ========
