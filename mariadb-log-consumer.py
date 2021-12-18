@@ -129,7 +129,7 @@ class Consumer:
             '--log-type',
             required=True,
             help='Type of log to consume. Permitted values: error, slow.\n' +
-                'Permitted aliases: errorlog, errorlog.'
+                'Permitted aliases: errorlog, errorlog. Case-insensitive.'
         )
         arg_parser.add_argument(
             '-l',
