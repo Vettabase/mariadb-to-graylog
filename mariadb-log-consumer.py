@@ -205,7 +205,8 @@ class Consumer:
             '-T',
             '--truncate-eventlog',
             action='store_true',
-            help='Truncate the eventlog before starting. Useful if the sourcelog was replaced.'
+            help='Truncate the eventlog before starting. Useful if the\n' +
+                'sourcelog was replaced.'
         )
         args = arg_parser.parse_args()
 
