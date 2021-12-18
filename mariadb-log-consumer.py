@@ -230,7 +230,8 @@ class Consumer:
         if args.log.find(Eventlog.FIELD_SEPARATOR) > -1:
             abort(2, 'The source log name and path cannot contain the character: "' + Eventlog.FIELD_SEPARATOR + '"')
 
-        args.stop = args.stop.upper()
+        if args.stop is not None:
+            args.stop = args.stop.upper()
         if args.limit > -1 and (args.stop is not None and args.stop != 'LIMIT'):
             abort(2, 'If --limit is > -1, --stop is set to \'limit\'')
         elif args.limit < 0 and args.stop == 'LIMIT':
