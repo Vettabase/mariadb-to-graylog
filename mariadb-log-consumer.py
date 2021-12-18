@@ -160,7 +160,11 @@ class Consumer:
         arg_parser.add_argument(
             '--stop',
             default=None,
-            help='End the program never when it reaches the sourcelog EOF.'
+            help='When the program must stop. Allowed values:\n' +
+                '    eof:    When the end of file is reached.\n' +
+                '    limit:  When --limit sourcelog entries are processed.\n' +
+                '    never:  Always keep running, waiting for new\n' +
+                '            entries to process.'
         )
         # --*-wait is MariaDB stle. eof refers to --stop-eof.
         arg_parser.add_argument(
