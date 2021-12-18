@@ -116,7 +116,8 @@ class Consumer:
         arg_parser = argparse.ArgumentParser(
             prog = Registry.PROGRAM,
             version = Registry.VERSION,
-            description = Registry.DESCRIPTION
+            description = Registry.DESCRIPTION,
+            formatter_class = argparse.RawTextHelpFormatter
         )
         arg_parser.add_argument(
             '-t',
@@ -135,8 +136,8 @@ class Consumer:
             '--limit',
             type=int,
             default=-1,
-            help='Maximum number of sourcelog entries to process. Zero or ' +
-                'a negative value means process all sourcelog entries.' +
+            help='Maximum number of sourcelog entries to process. Zero or\n' +
+                'a negative value means process all sourcelog entries.\n' +
                 'Implies --stop-never.'
         )
         # --offset recalls SQL LIMIT.
@@ -145,7 +146,7 @@ class Consumer:
             '--offset',
             type=int,
             default=-1,
-            help='Number of sourcelog entries to skip at the beginning. ' +
+            help='Number of sourcelog entries to skip at the beginning.\n' +
                 'Zero or a negative value means skip nothing.'
         )
         # --stop-never is from mysqlbinlog
@@ -160,14 +161,14 @@ class Consumer:
             '--eof-wait',
             type=int,
             default=1000,
-            help='Number of milliseconds to wait after reaching the sourcelog' +
+            help='Number of milliseconds to wait after reaching the sourcelog\n' +
                 'end, before checking if there are new contents.'
         )
         arg_parser.add_argument(
             '--label',
             default='',
-            help='ID for the program execution. To calls with different ' +
-                'IDs are allowed to run simultaneously. ' +
+            help='ID for the program execution. To calls with different\n' +
+                'IDs are allowed to run simultaneously.\n' +
                 'Default: same value as --log-type.'
         )
         # MariaDB tools use -h for the host they connect to
