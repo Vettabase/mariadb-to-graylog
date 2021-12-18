@@ -117,6 +117,11 @@ class Consumer:
             prog = Registry.PROGRAM,
             version = Registry.VERSION,
             description = Registry.DESCRIPTION,
+            epilog = 'Exit codes:\n' +
+                '    0  Success\n' +
+                '    1  Generic error\n' +
+                '    2  Invalid input\n' +
+                '    3  OS error',
             formatter_class = argparse.RawTextHelpFormatter
         )
         arg_parser.add_argument(
