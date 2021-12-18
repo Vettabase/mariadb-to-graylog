@@ -29,6 +29,8 @@ class Consumer:
     _LOCK_FILE_PATH = '/tmp'
     #: Identifies a run of this program.
     _label = 'default'
+    #: If True, checks on the lock file are disabled.
+    _force_run = False
     #: Lock file handler.
     #: We open this file with an exclusive lock to make sure only
     #: one istance of the consumer is running for a given label.
@@ -191,6 +193,13 @@ class Consumer:
                 'IDs are allowed to run simultaneously.\n' +
                 'Default: same value as --log-type.'
         )
+        arg_parser.add_argument(
+            '-f',
+            '--force-run',
+            action='store_true',
+            help='Don\'t check if another instance of the program is running, ' +
+                'and don\'t prevent other instances from running.'
+        )
         # MariaDB tools use -h for the host they connect to
         # but with ArgParse it's used for --help, we we use
         # uppercase -H instead
@@ -269,6 +278,8 @@ class Consumer:
             # default when --limit is absent
             self._stop = 'NEVER'
         self._eof_wait = args.eof_wait
+        if args.force_run:
+            self._force_run = True
         if args.label:
             self._label = args.label
         else:
@@ -304,11 +315,12 @@ class Consumer:
         signal.signal(signal.SIGINT, self.handle_signal)
         signal.signal(signal.SIGTERM, self.handle_signal)
 
-        self._lock_file_name = self._LOCK_FILE_PATH + '/' + self._label
-        try:
-            self._lock_file = self.os.open(self._lock_file_name, self.os.O_CREAT | self.os.O_EXCL | self.os.O_RDWR)
-        except OSError:
-            abort(3, 'Lock file exists or cannot be created: ' + self._lock_file_name)
+        if not self._force_run:
+            self._lock_file_name = self._LOCK_FILE_PATH + '/' + self._label
+            try:
+                self._lock_file = self.os.open(self._lock_file_name, self.os.O_CREAT | self.os.O_EXCL | self.os.O_RDWR)
+            except OSError:
+                abort(3, 'Lock file exists or cannot be created: ' + self._lock_file_name)
 
         self.consuming_loop()
 
@@ -333,8 +345,9 @@ class Consumer:
     def cleanup(self):
         """ Do the cleanup and terminate program execution """
         self._eventlog.close()
-        self.os.close(self._lock_file)
-        self.os.unlink(self._lock_file_name)
+        if not self._force_run:
+            self.os.close(self._lock_file)
+            self.os.unlink(self._lock_file_name)
         sys.exit(0)
 
     def handle_signal(self, signum, frame):
