@@ -166,7 +166,7 @@ class Consumer:
                 '    never:  Always keep running, waiting for new\n' +
                 '            entries to process.'
         )
-        # --*-wait is MariaDB stle. eof refers to --stop-eof.
+        # --*-wait is MariaDB stle. eof refers to --stop=eof.
         arg_parser.add_argument(
             '--eof-wait',
             type=int,
