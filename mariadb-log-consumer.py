@@ -51,6 +51,8 @@ class Consumer:
     #: to do so.
     _should_stop = False
 
+    _message_wait = None
+
     #: Eventlog instance
     _eventlog = None
     #! Eventlog options distionary, to be passed to Eventlog
@@ -174,6 +176,14 @@ class Consumer:
             help='Number of milliseconds to wait after reaching the sourcelog\n' +
                 'end, before checking if there are new contents.'
         )
+        # --*-wait is MariaDB stle
+        arg_parser.add_argument(
+            '--message-wait',
+            type=int,
+            default=0,
+            help='Number of milliseconds to wait before processing the next message,\n'
+                'as a trivial mechanism to avoid overloading the server.'
+        )
         arg_parser.add_argument(
             '--label',
             default='',
@@ -245,6 +255,7 @@ class Consumer:
         else:
             abort(2, 'Invalid value for --log-type')
         del log_type
+        self._message_wait = args.message_wait
         self._sourcelog_path = str(args.log)
         self._sourcelog_limit = args.limit - 1
         self._sourcelog_offset = args.offset - 1
@@ -525,10 +536,16 @@ class Consumer:
         if self._eventlog.get_offset() is not None:
             self.log_handler.seek(self._eventlog.get_offset())
 
+        in_sequence = False
+
         while True:
 
             source_line = self.log_handler.readline().rstrip()
             while (source_line):
+                in_sequence = True
+                if self._message_wait:
+                    self.time.sleep(self._message_wait / 1000)
+
                 # if _sourcelog_offset is not negative, skip this line,
                 # read the next and decrement
                 if self._sourcelog_offset > -1:
@@ -543,8 +560,12 @@ class Consumer:
                 elif self._sourcelog_limit > 0:
                     self._sourcelog_limit = self._sourcelog_limit - 1
 
+            if self._message_wait:
+                self.time.sleep(self._message_wait / 1000)
             if self._message:
                 self._process_message()
+
+            in_sequence = False
 
             # We reached sourcelog EOF.
             # Depening on _stop, we exit the loop (and then the program)
