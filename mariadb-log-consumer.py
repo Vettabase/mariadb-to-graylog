@@ -405,14 +405,6 @@ class Consumer:
             "index": index
         }
 
-    def extract_word(self, next_word):
-        """ Extract the word from a next_word fictionary, handle errors """
-        try:
-            word = next_word['word']
-        except:
-            abort(1, 'Malformed next_word dictionary: ' + str(next_word))
-        return word
-
     def _process_message(self):
         """ Send the message and log the coordinates.
             Prevent the program to be interrupted just before sending
