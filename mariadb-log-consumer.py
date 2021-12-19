@@ -327,7 +327,7 @@ class Consumer:
             except OSError:
                 abort(3, 'Lock file exists or cannot be created: ' + self._lock_file_name)
 
-        self.consuming_loop()
+        self._consuming_loop()
 
     def _get_timestamp(self):
         """ Return UNIX timestamp (not decimals) """
@@ -421,7 +421,7 @@ class Consumer:
         elif self._requests.was_requested('ROTATE'):
             self._eventlog.rotate()
 
-    def consuming_loop(self):
+    def _consuming_loop(self):
         """ Consumer's main loop, in which we read next lines if available, or wait for more lines to be written.
             Calls a specific method based on _sourcelog_type.
         """
