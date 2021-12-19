@@ -200,8 +200,8 @@ class Consumer:
             '-f',
             '--force-run',
             action='store_true',
-            help='Don\'t check if another instance of the program is running, ' +
-                'and don\'t prevent other instances from running.'
+            help='Don\'t check if another instance of the program is\n' +
+                'running, and don\'t prevent other instances from running.'
         )
         # MariaDB tools use -h for the host they connect to
         # but with ArgParse it's used for --help, we we use
