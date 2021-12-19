@@ -186,8 +186,9 @@ class Consumer:
             '--message-wait',
             type=int,
             default=0,
-            help='Number of milliseconds to wait before processing the next message,\n'
-                'as a trivial mechanism to avoid overloading the server.'
+            help='Number of milliseconds to wait before processing the\n' +
+                'next message, as a trivial mechanism to avoid overloading\n' +
+                'the server.'
         )
         arg_parser.add_argument(
             '--label',
