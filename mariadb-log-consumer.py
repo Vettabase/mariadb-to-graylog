@@ -342,13 +342,14 @@ class Consumer:
         self._sourcelog_last_position = self._get_current_position()
         self._eventlog.append(self._get_current_position(), self._sourcelog_path)
 
-    def cleanup(self):
+    def cleanup(self, exit_program=True):
         """ Do the cleanup and terminate program execution """
         self._eventlog.close()
         if not self._force_run:
             self.os.close(self._lock_file)
             self.os.unlink(self._lock_file_name)
-        sys.exit(0)
+        if exit_program:
+            sys.exit(0)
 
     def handle_signal(self, signum, frame):
         """ Handle signals to avoid that the program is interrupted when it shouldn't be. """
@@ -422,10 +423,14 @@ class Consumer:
         """ Consumer's main loop, in which we read next lines if available, or wait for more lines to be written.
             Calls a specific method based on _sourcelog_type.
         """
-        if self._sourcelog_type == 'ERROR':
-            self.error_log_consuming_loop()
-        else:
-            self.slow_log_consuming_loop()
+        try:
+            if self._sourcelog_type == 'ERROR':
+                self.error_log_consuming_loop()
+            else:
+                self.slow_log_consuming_loop()
+        except Exception as x:
+            self.cleanup(False)
+            raise x
 
 
     ##  Error Log
