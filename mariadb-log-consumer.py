@@ -427,9 +427,9 @@ class Consumer:
         """
         try:
             if self._sourcelog_type == 'ERROR':
-                self.error_log_consuming_loop()
+                self._error_log_consuming_loop()
             else:
-                self.slow_log_consuming_loop()
+                self._slow_log_consuming_loop()
         except Exception as x:
             self.cleanup(False)
             raise x
@@ -549,7 +549,7 @@ class Consumer:
                 print('Processing multiline message')
             self._message.append_to_field(True, 'text', message)
 
-    def error_log_consuming_loop(self):
+    def _error_log_consuming_loop(self):
         """ Consumer's main loop for the Error Log """
 
         # if an offset was read from the Eventlog on start,
@@ -605,15 +605,15 @@ class Consumer:
     ##  Slow Log
     ##  ========
 
-    def slow_log_process_line(self, line):
+    def _slow_log_process_line(self, line):
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
         print(line)
 
-    def slow_log_consuming_loop(self):
+    def _slow_log_consuming_loop(self):
         """ Consumer's main loop for the Slow log """
         source_line = self.log_handler.readline().rstrip()
         while (source_line):
-            self.slow_log_process_line(source_line)
+            self._slow_log_process_line(source_line)
             source_line = self.log_handler.readline().rstrip()
 
 
