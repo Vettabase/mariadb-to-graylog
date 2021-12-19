@@ -13,6 +13,8 @@ class GELF_message:
         * Send to Graylog.
     """
 
+    import socket
+
     ##  Variables
     ##  =========
 
@@ -102,6 +104,13 @@ class GELF_message:
         for key in extra:
             self.create_field(True, key, extra[key])
 
+    def _send_udp(self, gelf_message):
+        self.socket.socket(self.socket.AF_INET, self.socket.SOCK_DGRAM).sendto(
+            # python3: bytes(gelf_message, 'utf-8'),
+            gelf_message,
+            ('127.0.0.1', 456)
+        )
+
     def send(self):
         """ Send the GELF message. """
         gelf_message = '{'
@@ -114,6 +123,8 @@ class GELF_message:
             gelf_message = gelf_message + '"' + key + '":"' + self._message[key].replace('"', '\\"') + '"'
 
         gelf_message = gelf_message + '}'
+
+        #self._send_udp(gelf_message)
 
         if self.debug['GELF_MESSAGES']:
             print(gelf_message)
