@@ -29,30 +29,31 @@ class Request_Counters:
 
     def __init__(self, action_list):
         for action in action_list:
+            print(action)
             self._request_counters[action] = 0
 
     def increment(self, action):
         try:
-            self._request_counters['action'] = self._request_counters['action'] + 1
+            self._request_counters[action] = self._request_counters[action] + 1
         except KeyError as e:
-            raise Exception('Action does not exist: \'' + action + '\'')
+            raise Exception('[Request_Counters.increment] Action does not exist: \'' + action + '\'')
 
     def reset(self, action):
         try:
-            self._request_counters['action'] = 0
+            self._request_counters[action] = 0
         except KeyError as e:
-            raise Exception('Action does not exist: \'' + action + '\'')
+            raise Exception('[Request_Counters.reset] Action does not exist: \'' + action + '\'')
 
     def get_action(self, action):
         try:
-            return self._request_counters['action']
+            return self._request_counters[action]
         except KeyError as e:
-            raise Exception('Action does not exist: \'' + action + '\'')
+            raise Exception('[Request_Counters.get_action] Action does not exist: \'' + action + '\'')
 
     def was_requested(self, action):
         try:
-            return (self._request_counters['action'] > 0)
+            return (self._request_counters[action] > 0)
         except KeyError as e:
-            raise Exception('Action does not exist: \'' + action + '\'')
+            raise Exception('[Request_Counters.was_requested] Action does not exist: \'' + action + '\'')
 
 #EOF

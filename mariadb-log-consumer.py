@@ -49,9 +49,6 @@ class Consumer:
     _eof_wait = -1
     #: If set to False, signals cannot interrupt the program.
     _can_be_interrupted = True
-    #: If set to True, the program will exit as soon as it is safe
-    #: to do so.
-    _should_stop = False
     #: Requests from signals that cannot be accomplished immediately
     #: are stored here.
     _requests = Request_Counters(('STOP', 'ROTATE'))
@@ -358,7 +355,7 @@ class Consumer:
         if self._can_be_interrupted:
             self.cleanup()
         else:
-            self._should_stop = True
+            self._requests.increment('STOP')
 
 
     ##  Consumer Loop
@@ -418,7 +415,7 @@ class Consumer:
         self._log_coordinates()
         self._can_be_interrupted = True
 
-        if self._should_stop:
+        if self._requests.was_requested('STOP'):
             self.cleanup()
 
     def consuming_loop(self):
