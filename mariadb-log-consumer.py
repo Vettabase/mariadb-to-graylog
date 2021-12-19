@@ -52,6 +52,9 @@ class Consumer:
     #: If set to True, the program will exit as soon as it is safe
     #: to do so.
     _should_stop = False
+    #: Requests from signals that cannot be accomplished immediately
+    #: are stored here.
+    _requests = Request_Counters(('STOP', 'ROTATE'))
 
     _message_wait = None
 
