@@ -55,7 +55,7 @@ class Eventlog:
         """ Get the filename for a temporary eventlog.
             It's not guaranteed that the file doesn't exist.
         """
-        return self._get_name() + self._EVENTLOG_TMP_EXTENSION
+        return self._get_name_regular() + self._EVENTLOG_TMP_EXTENSION
 
     def __init__(self, options):
         """ Open newest log file. If the file is changed (eg by logrotate) it closes and reopens it. """

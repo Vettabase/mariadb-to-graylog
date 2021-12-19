@@ -314,6 +314,7 @@ class Consumer:
         # Note: we want to start handling signals before creating the lock file
         signal.signal(signal.SIGINT, self.handle_signal)
         signal.signal(signal.SIGTERM, self.handle_signal)
+        signal.signal(signal.SIGHUP, self.handle_signal)
 
         if not self._force_run:
             self._lock_file_name = self._LOCK_FILE_PATH + '/' + self._label
@@ -354,7 +355,10 @@ class Consumer:
     def handle_signal(self, signum, frame):
         """ Handle signals to avoid that the program is interrupted when it shouldn't be. """
         if self._can_be_interrupted:
-            self.cleanup()
+            if signum == signal.SIGHUP:
+                self._eventlog.rotate()
+            else:
+                self.cleanup()
         else:
             self._requests.increment('STOP')
 
@@ -418,6 +422,8 @@ class Consumer:
 
         if self._requests.was_requested('STOP'):
             self.cleanup()
+        elif self._requests.was_requested('ROTATE'):
+            self._eventlog.rotate()
 
     def consuming_loop(self):
         """ Consumer's main loop, in which we read next lines if available, or wait for more lines to be written.
