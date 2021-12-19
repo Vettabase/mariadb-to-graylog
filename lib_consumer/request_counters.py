@@ -30,7 +30,6 @@ class Request_Counters:
     def __init__(self, action_list):
         """ Accept a list or tuple of actions, assign them to _request_counters. """
         for action in action_list:
-            print(action)
             self._request_counters[action] = 0
 
     def increment(self, action):
