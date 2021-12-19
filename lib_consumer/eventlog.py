@@ -28,8 +28,10 @@ class Eventlog:
 
     #: Path of the eventlog file
     _EVENTLOG_PATH = '/var/mariadb-to-graylog/logs'
-    # Name of the eventlog file
+    #: Name of the eventlog file
     _EVENTLOG_NAME = 'events.log'
+    #: Temporary Eventlog extension
+    _EVENTLOG_TMP_EXTENSION = '.tmp'
 
     #: Separator between fields, in the same line
     FIELD_SEPARATOR = ':'
@@ -43,13 +45,21 @@ class Eventlog:
     ##  Methods
     ##  =======
 
-    def _get_name(self):
-        """ Compose the file for a new eventlog """
+    def _get_name_regular(self):
+        """ Get the filename for a new eventlog.
+            It's not guaranteed that the file doesn't exist.
+        """
         return self._EVENTLOG_PATH + '/' + self._EVENTLOG_NAME
+
+    def _get_name_tmp(self):
+        """ Get the filename for a temporary eventlog.
+            It's not guaranteed that the file doesn't exist.
+        """
+        return self._get_name() + self._EVENTLOG_TMP_EXTENSION
 
     def __init__(self, options):
         """ Open newest log file. If the file is changed (eg by logrotate) it closes and reopens it. """
-        file = self._get_name()
+        file = self._get_name_regular()
 
         # If the Eventlog exists and we're not going to truncate it,
         # read the offset from the last line and store it in self._offset,
@@ -72,6 +82,7 @@ class Eventlog:
                 self._handler = open(file, 'a')
             except:
                 raise Exception('Could not open or create eventlog: ' + file)
+        # Open the existing file for append
         else:
             try:
                 self._handler = open(file, 'a')
@@ -89,5 +100,47 @@ class Eventlog:
     def close(self):
         """ Close the Eventlog """
         self._handler.close()
+
+    def rotate(self):
+        """ Rotate the Eventlog.
+            If the operation fails before the creation and opening of a new file,
+            the old file will remain untouched or it will be renamed but not
+            deleted.
+        """
+        # Rotating means:
+        #   - close the existing logfile
+        #   - rename it
+        #   - create the new logfile
+        #   - open the new logfile
+        #   - delete the old logfile
+
+        file_name_regular = self._get_name_regular()
+        file_name_tmp = self._get_name_tmp()
+
+        is_closed = False
+        is_renamed = False
+        is_reopened = False
+
+        try:
+            self._handler.close()
+            is_closed = True
+            if os.path.exists(file_name_tmp):
+                os.rename.unlink(file_name_tmp)
+            is_purged = True
+            os.rename(file_name_regular, file_name_tmp)
+            is_renamed = True
+            self._handler = open(file_name_regular, 'a')
+            is_reopened = True
+            os.unlink(file_name_tmp)
+        except:
+            if is_reopened:
+                status = 'The new logfile was opened, but the old could not be deleted.'
+            elif is_renamed:
+                status = 'The old logfile was renamed, but the new file could not be created.'
+            elif is_closed:
+                status = 'The old logfile was closed, but it could not be renamed.'
+            else:
+                status = 'The old logfile could not be closed.'
+            abort(3, 'An error occurred during rotation. ' + status)
 
 #EOF
