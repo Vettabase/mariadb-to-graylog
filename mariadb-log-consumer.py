@@ -438,7 +438,7 @@ class Consumer:
     ##  Error Log
     ##  =========
 
-    def error_log_process_line(self, line):
+    def _error_log_process_line(self, line):
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
         well_formed = True
 
@@ -576,7 +576,7 @@ class Consumer:
                     self._sourcelog_offset = self._sourcelog_offset - 1
                     source_line = self.log_handler.readline()
                     continue
-                self.error_log_process_line(source_line)
+                self._error_log_process_line(source_line)
                 source_line = self.log_handler.readline()
                 # enforce --limit if it is > -1
                 if self._sourcelog_limit == 0:
