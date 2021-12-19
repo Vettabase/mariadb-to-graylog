@@ -9,8 +9,9 @@ from registry import Registry
 
 
 class Consumer:
-    """
-    Flexible metaclass for defining useful decorator functions.
+    """ Main class of the program.
+        Handles CLI arguments and starts a consumer for MariaDB
+        error log and slow log.
     """
 
     ##  Modules
