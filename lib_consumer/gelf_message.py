@@ -6,7 +6,7 @@
 """
 
 
-class GELF_message:
+class GELF_Message:
     """ A GELF message that supports these operations:
         * Creation, with standard and custom attributes;
         * Append a string to an existing attribute;

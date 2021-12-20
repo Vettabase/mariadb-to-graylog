@@ -527,7 +527,7 @@ class Consumer:
                 "text": message
             }
 
-            self._message = GELF_message(
+            self._message = GELF_Message(
                     Registry.DEBUG,
                     self._GRAYLOG['GELF_version'],
                     timestamp,
