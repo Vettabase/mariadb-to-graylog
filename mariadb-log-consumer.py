@@ -255,7 +255,7 @@ class Consumer:
         if args.label.find('/') > -1 or args.label.find('\\') > -1:
             abort(2, 'A label cannot contain slashes or backslashes')
 
-        if (args.graylog_host and not args.graylog_port) or (args.graylog_port and not args.graylog_host):
+        if bool(args.graylog_host) != bool(args.graylog_port):
             abort(2, 'Set both --graylog-host and --graylog-port, or none of them')
 
         # copy arguments into object members
