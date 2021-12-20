@@ -79,12 +79,11 @@ class Consumer:
     #: GELF message we're composing and then sending to Graylog
     _message = None
 
-    #: Necessary information to send messages to Graylog.
+    #: Necessary information to send messages to work with Graylog.
     _GRAYLOG = {
-        # Graylog host
-        'host': None,
-        # Graylog port
-        'port': None,
+        # A Graylog client object, that contains all necessary
+        # information to connect to Graylog
+        'client': None,
         # GELF version to use
         'GELF_version': '1.1'
     }
@@ -289,8 +288,11 @@ class Consumer:
         else:
             self._label = args.log_type
 
-        self._GRAYLOG['host'] = args.graylog_host
-        self._GRAYLOG['port'] = args.graylog_port
+        # host and port information will only be stored in Graylog client
+        self._GRAYLOG['client'] = Graylog_Client_UDP(
+            args.graylog_host,
+            args.graylog_port
+        )
 
         try:
             self.log_handler = open(self._sourcelog_path, 'r', 0)
