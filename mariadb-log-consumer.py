@@ -289,10 +289,11 @@ class Consumer:
             self._label = args.log_type
 
         # host and port information will only be stored in Graylog client
-        self._GRAYLOG['client'] = Graylog_Client_UDP(
-            args.graylog_host,
-            args.graylog_port
-        )
+        if args.graylog_host is not None:
+            self._GRAYLOG['client'] = Graylog_Client_UDP(
+                args.graylog_host,
+                args.graylog_port
+            )
 
         try:
             self.log_handler = open(self._sourcelog_path, 'r', 0)
@@ -413,7 +414,7 @@ class Consumer:
             the message and release the protection after logging.
         """
         self._can_be_interrupted = False
-        self._message.send()
+        self._GRAYLOG['client'].send(self._message.to_string())
         self._message = None
         self._log_coordinates()
         self._can_be_interrupted = True

@@ -10,7 +10,7 @@ class GELF_Message:
     """ A GELF message that supports these operations:
         * Creation, with standard and custom attributes;
         * Append a string to an existing attribute;
-        * Send to Graylog.
+        * Get as string.
     """
 
     import socket
@@ -104,8 +104,8 @@ class GELF_Message:
         for key in extra:
             self.create_field(True, key, extra[key])
 
-    def send(self):
-        """ Send the GELF message. """
+    def to_string(self):
+        """ Return the GELF message as string. """
         gelf_message = '{'
 
         is_first = True
@@ -120,6 +120,6 @@ class GELF_Message:
         if self.debug['GELF_MESSAGES']:
             print(gelf_message)
 
-        return True
+        return gelf_message
 
 #EOF

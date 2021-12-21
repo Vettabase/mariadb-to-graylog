@@ -9,6 +9,10 @@ class Graylog_Client_UDP:
     """ Send messages to Graylog using a UDP port.
     """
 
+
+    import socket
+
+
     #: Graylog host.
     _host = None
     #: Graylog UDP port to use.
