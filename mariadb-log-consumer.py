@@ -289,7 +289,7 @@ class Consumer:
             self._label = args.log_type
 
         # host and port information will only be stored in Graylog client
-        if args.graylog_host is not None:
+        if args.graylog_host:
             self._GRAYLOG['client'] = Graylog_Client_UDP(
                 args.graylog_host,
                 args.graylog_port
