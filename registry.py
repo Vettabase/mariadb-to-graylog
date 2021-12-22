@@ -24,6 +24,10 @@ class Registry:
 
     #: Backup flags, for additional output
     DEBUG = {
+        # Normally, the consuming loop handles exceptions, to prevent program
+        # crashes from leaving a lock file. Set to True to dodge exceptions
+        # instead, to get a more meaningful traceback.
+        'DODGE_EXCEPTIONS': True,
         # Print GELF messages before sending them
         'GELF_MESSAGES': True,
         # Print read log lines

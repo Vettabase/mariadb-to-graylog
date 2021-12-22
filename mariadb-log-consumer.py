@@ -424,18 +424,25 @@ class Consumer:
         elif self._requests.was_requested('ROTATE'):
             self._eventlog.rotate()
 
+
     def _consuming_loop(self):
         """ Consumer's main loop, in which we read next lines if available, or wait for more lines to be written.
             Calls a specific method based on _sourcelog_type.
         """
-        try:
+        if Registry.DEBUG['DODGE_EXCEPTIONS'] == True:
             if self._sourcelog_type == 'ERROR':
                 self._error_log_consuming_loop()
             else:
                 self._slow_log_consuming_loop()
-        except Exception as x:
-            self.cleanup(False)
-            raise x
+        else:
+            try:
+                if self._sourcelog_type == 'ERROR':
+                    self._error_log_consuming_loop()
+                else:
+                    self._slow_log_consuming_loop()
+            except Exception as x:
+                self.cleanup(False)
+                raise x
 
 
     ##  Error Log
@@ -550,7 +557,7 @@ class Consumer:
         else:
             if Registry.DEBUG['LOG_PARSER']:
                 print('Processing multiline message')
-            self._message.append_to_field(True, 'text', message)
+            #self._message.append_to_field(True, 'text', message)
 
     def _error_log_consuming_loop(self):
         """ Consumer's main loop for the Error Log """
