@@ -414,7 +414,10 @@ class Consumer:
             the message and release the protection after logging.
         """
         self._can_be_interrupted = False
-        self._GRAYLOG['client'].send(self._message.to_string())
+        if self._GRAYLOG['client'] is not None:
+            self._GRAYLOG['client'].send(
+                self._message.to_string()
+            )
         self._message = None
         self._log_coordinates()
         self._can_be_interrupted = True
