@@ -117,9 +117,6 @@ class GELF_Message:
 
         gelf_message = gelf_message + '}'
 
-        if self.debug['GELF_MESSAGES']:
-            print(gelf_message)
-
         return gelf_message
 
 #EOF

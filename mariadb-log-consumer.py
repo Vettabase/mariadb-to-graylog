@@ -413,10 +413,15 @@ class Consumer:
             Prevent the program to be interrupted just before sending
             the message and release the protection after logging.
         """
+        message_string = self._message.to_string()
+
+        if Registry.DEBUG['GELF_MESSAGES']:
+            print(message_string)
+
         self._can_be_interrupted = False
         if self._GRAYLOG['client'] is not None:
             self._GRAYLOG['client'].send(
-                self._message.to_string()
+                message_string
             )
         self._message = None
         self._log_coordinates()
@@ -561,6 +566,11 @@ class Consumer:
             if Registry.DEBUG['LOG_PARSER']:
                 print('Processing multiline message')
             #self._message.append_to_field(True, 'text', message)
+
+    def _get_source_line(self):
+        """ Return processed next line from the sourcelog,
+            after waiting _message_wait as appropriate.
+        """
 
     def _error_log_consuming_loop(self):
         """ Consumer's main loop for the Error Log """
