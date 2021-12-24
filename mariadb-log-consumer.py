@@ -4,6 +4,7 @@
 import sys
 import signal
 
+from lib_consumer import Graylog_Client
 from lib_consumer import *
 from registry import Registry
 

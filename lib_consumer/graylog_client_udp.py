@@ -5,7 +5,10 @@
 """
 
 
-class Graylog_Client_UDP:
+from graylog_client import Graylog_Client
+
+
+class Graylog_Client_UDP(Graylog_Client):
     """ Send messages to Graylog using a UDP port.
     """
 
