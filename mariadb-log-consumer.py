@@ -586,11 +586,12 @@ class Consumer:
                     continue
 
                 in_sequence = True
+
                 if self._message_wait:
                     self.time.sleep(self._message_wait / 1000)
-
                 self._error_log_process_line(source_line)
                 source_line = self.log_handler.readline().rstrip()
+
                 # enforce --limit if it is > -1
                 if self._sourcelog_limit == 0:
                     break
