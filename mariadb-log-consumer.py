@@ -439,7 +439,7 @@ class Consumer:
 
         self._disallow_interruptions()
 
-        if self._GRAYLOG['client'] is not None:
+        if self._GRAYLOG['client']:
             self._GRAYLOG['client'].send(
                 message_string
             )
@@ -593,7 +593,7 @@ class Consumer:
 
         # if an offset was read from the Eventlog on start,
         # skip to the offset
-        if self._eventlog.get_offset() is not None:
+        if self._eventlog.get_offset():
             self.log_handler.seek(self._eventlog.get_offset())
 
         # set to True when repeating a loop,
