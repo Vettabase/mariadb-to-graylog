@@ -408,6 +408,25 @@ class Consumer:
             "index": index
         }
 
+    def _disallow_interruptions(self):
+        """ Prevent the program from being interrupted
+            until _allow_interruptions() is called.
+            Idempotent.
+        """
+        self._can_be_interrupted = False
+
+    def _allow_interruptions(self):
+        """ Allow the program to be interrupted from now on.
+            Check if there are pending requests, and handle them.
+            Idempotent.
+        """
+        self._can_be_interrupted = True
+
+        if self._requests.was_requested('STOP'):
+            self.cleanup()
+        elif self._requests.was_requested('ROTATE'):
+            self._eventlog.rotate()
+
     def _process_message(self):
         """ Send the message and log the coordinates.
             Prevent the program to be interrupted just before sending
@@ -418,19 +437,16 @@ class Consumer:
         if Registry.DEBUG['GELF_MESSAGES']:
             print(message_string)
 
-        self._can_be_interrupted = False
+        self._disallow_interruptions()
+
         if self._GRAYLOG['client'] is not None:
             self._GRAYLOG['client'].send(
                 message_string
             )
         self._message = None
         self._log_coordinates()
-        self._can_be_interrupted = True
 
-        if self._requests.was_requested('STOP'):
-            self.cleanup()
-        elif self._requests.was_requested('ROTATE'):
-            self._eventlog.rotate()
+        self._allow_interruptions()
 
 
     def _consuming_loop(self):
