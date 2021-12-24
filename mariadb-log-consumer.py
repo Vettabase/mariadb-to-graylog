@@ -576,7 +576,6 @@ class Consumer:
         in_sequence = False
 
         while True:
-
             source_line = self.log_handler.readline().rstrip()
             while source_line:
                 # if _sourcelog_offset is not negative, skip this line,
@@ -591,7 +590,7 @@ class Consumer:
                     self.time.sleep(self._message_wait / 1000)
 
                 self._error_log_process_line(source_line)
-                source_line = self.log_handler.readline()
+                source_line = self.log_handler.readline().rstrip()
                 # enforce --limit if it is > -1
                 if self._sourcelog_limit == 0:
                     break
