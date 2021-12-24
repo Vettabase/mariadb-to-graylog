@@ -579,16 +579,17 @@ class Consumer:
 
             source_line = self.log_handler.readline().rstrip()
             while source_line:
-                in_sequence = True
-                if self._message_wait:
-                    self.time.sleep(self._message_wait / 1000)
-
                 # if _sourcelog_offset is not negative, skip this line,
                 # read the next and decrement
                 if self._sourcelog_offset > -1:
                     self._sourcelog_offset = self._sourcelog_offset - 1
                     source_line = self.log_handler.readline()
                     continue
+
+                in_sequence = True
+                if self._message_wait:
+                    self.time.sleep(self._message_wait / 1000)
+
                 self._error_log_process_line(source_line)
                 source_line = self.log_handler.readline()
                 # enforce --limit if it is > -1
