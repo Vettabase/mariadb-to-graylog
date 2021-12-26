@@ -82,9 +82,10 @@ class Consumer:
 
     #: Necessary information to send messages to work with Graylog.
     _GRAYLOG = {
-        # A Graylog client object, that contains all necessary
-        # information to connect to Graylog
-        'client': None,
+        # Graylog client objects, that contain all necessary
+        # information to connect to Graylog via UDP and TCP
+        'client_udp': None,
+        'client_tcp': None,
         # GELF version to use
         'GELF_version': '1.1'
     }
@@ -213,12 +214,15 @@ class Consumer:
             default='',
             help='Graylog hostname.'
         )
-        # MariaDB tools use -P for the port they connect to
         arg_parser.add_argument(
-            '-P',
-            '--graylog-port',
+            '--graylog-port-udp',
             type=int,
             help='Graylog UDP port.'
+        )
+        arg_parser.add_argument(
+            '--graylog-port-tcp',
+            type=int,
+            help='Graylog TCP port.'
         )
         # Advertised name of the local host.
         # Shortened as -n because -h is already taken
@@ -256,8 +260,8 @@ class Consumer:
         if args.label.find('/') > -1 or args.label.find('\\') > -1:
             abort(2, 'A label cannot contain slashes or backslashes')
 
-        if bool(args.graylog_host) != bool(args.graylog_port):
-            abort(2, 'Set both --graylog-host and --graylog-port, or none of them')
+        if bool(args.graylog_host) != (bool(args.graylog_port_udp) or bool(args.graylog_port_tcp)):
+            abort(2, 'Set --graylog-host and at least one port, or omit all these options')
 
         # copy arguments into object members
 
@@ -290,10 +294,15 @@ class Consumer:
             self._label = args.log_type
 
         # host and port information will only be stored in Graylog client
-        if args.graylog_host:
-            self._GRAYLOG['client'] = Graylog_Client_UDP(
+        if args.graylog_port_udp:
+            self._GRAYLOG['client_udp'] = Graylog_Client_UDP(
                 args.graylog_host,
-                args.graylog_port
+                args.graylog_port_udp
+            )
+        if args.graylog_port_tcp:
+            self._GRAYLOG['client_tcp'] = Graylog_Client_UDP(
+                args.graylog_host,
+                args.graylog_port_tcp
             )
 
         try:
@@ -357,6 +366,8 @@ class Consumer:
         if not self._force_run:
             self.os.close(self._lock_file)
             self.os.unlink(self._lock_file_name)
+            # Destructors will close the connections where necessary
+            del self._GRAYLOG['client_tcp']
         if exit_program:
             sys.exit(0)
 
@@ -440,10 +451,16 @@ class Consumer:
 
         self._disallow_interruptions()
 
-        if self._GRAYLOG['client']:
-            self._GRAYLOG['client'].send(
-                message_string
-            )
+        try:
+            if self._GRAYLOG['client_udp']:
+                self._GRAYLOG['client_udp'].send(
+                    message_string
+                )
+        except:
+            if self._GRAYLOG['client_tcp']:
+                self._GRAYLOG['client_tcp'].send(
+                    message_string
+                )
         self._message = None
         self._log_coordinates()
 
