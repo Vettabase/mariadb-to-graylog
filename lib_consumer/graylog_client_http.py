@@ -30,6 +30,6 @@ class Graylog_Client_HTTP(Graylog_Client):
 
     def send(self, gelf_message):
         """ Send the specified GELF message over an HTTP request. """
-        self.requests.get(self._url, data=self.json.loads(gelf_message))
+        self.requests.get(self._url, data=self.json.loads(gelf_message), verify=False)
 
 #EOF
