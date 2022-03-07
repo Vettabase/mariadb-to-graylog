@@ -39,9 +39,9 @@ class Graylog_Client_HTTP(Graylog_Client):
         # Set a hard timeout for the HTTP call
         self.eventlet.monkey_patch()
         with self.eventlet.Timeout(self._graylog_http_timeout):
-            self.requests.get(
+            self.requests.post(
                 self._url,
-                data=self.json.loads(gelf_message),
+                json=self.json.loads(gelf_message),
                 timeout=self._graylog_http_timeout_idle,
                 verify=False
             )
