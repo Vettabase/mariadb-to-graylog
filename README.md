@@ -39,7 +39,12 @@ To do.
 
 ### Error handling
 
-To do.
+The program tries to always terminate with a meaningful exit code:
+
+- 0 - Success
+- 1 - Generic error
+- 2 - Invalid parameters
+- 3 - External error (OS, hardware, network...)
 
 
 ## Testing with Netcat
