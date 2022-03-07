@@ -22,6 +22,10 @@ class Registry:
     #: Program description
     DESCRIPTION = 'Consume MariaDB error & slow logs and send them to GrayLog'
 
+    #: Length of the "short" field in characters, in GELF messages.
+    #: Does not include the event severity.
+    SHORT_MESSAGE_LENGTH = 20
+
     #: Backup flags, for additional output
     DEBUG = {
         # Normally, the consuming loop handles exceptions, to prevent program

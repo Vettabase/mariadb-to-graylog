@@ -569,6 +569,8 @@ class Consumer:
 
             # Start to compose the new message
 
+            short_message = level + ' ' + message[:Registry.SHORT_MESSAGE_LENGTH]
+
             # to increase format changes resilience, remove brackets and make uppercase
             level = level          \
                 .replace('[', '')  \
@@ -584,7 +586,7 @@ class Consumer:
                     self._GRAYLOG['GELF_version'],
                     timestamp,
                     self._hostname,
-                    'short',
+                    short_message,
                     level,
                     custom
                 )
