@@ -476,25 +476,33 @@ class Consumer:
 
         self._disallow_interruptions()
 
-        try:
-            if self._GRAYLOG['client_udp']:
+        sent = False
+
+        if self._GRAYLOG['client_udp']:
+            try:
                 self._GRAYLOG['client_udp'].send(
                     message_string
                 )
-        except:
-            try:
-                if self._GRAYLOG['client_tcp']:
-                    self._GRAYLOG['client_tcp'].send(
-                        message_string
-                    )
+                sent = True
             except:
-                try:
-                    if self._GRAYLOG['client_http']:
-                        self._GRAYLOG['client_http'].send(
-                            message_string
-                        )
-                except:
-                    pass
+                pass
+        
+        if sent == False and self._GRAYLOG['client_tcp']:
+            try:
+                self._GRAYLOG['client_tcp'].send(
+                    message_string
+                )
+                sent = True
+            except:
+                pass
+
+        if sent == False and self._GRAYLOG['client_http']:
+            try:
+                self._GRAYLOG['client_http'].send(
+                    message_string
+                )
+            except:
+                pass
 
         self._message = None
         self._log_coordinates()
