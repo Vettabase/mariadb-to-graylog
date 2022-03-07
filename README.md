@@ -2,11 +2,22 @@
 
 Consume MariaDB error log and slow log, and send events to Graylog.
 
-to install the dependencies:
+
+## Install
+
+To install the dependencies:
 
 ```
 pip -r requirements.txt
 ```
+
+
+## Usage
+
+More info will follow.
+
+
+### Help
 
 More info will follow. In the meanwhile, for usage refer to built-in help:
 
@@ -14,6 +25,21 @@ More info will follow. In the meanwhile, for usage refer to built-in help:
 /path/to/mariadb-log-consumer.py --help
 /path/to/mariadb-log-consumer.py -h
 ```
+
+
+### Run
+
+To do.
+
+
+### Terminate
+
+To do.
+
+
+### Error handling
+
+To do.
 
 
 ## Testing with Netcat
