@@ -224,6 +224,11 @@ class Consumer:
             type=int,
             help='Graylog TCP port.'
         )
+        arg_parser.add_argument(
+            '--graylog-port-http',
+            type=int,
+            help='Graylog HTTP port.'
+        )
         # Advertised name of the local host.
         # Shortened as -n because -h is already taken
         arg_parser.add_argument(
@@ -260,7 +265,7 @@ class Consumer:
         if args.label.find('/') > -1 or args.label.find('\\') > -1:
             abort(2, 'A label cannot contain slashes or backslashes')
 
-        if bool(args.graylog_host) != (bool(args.graylog_port_udp) or bool(args.graylog_port_tcp)):
+        if bool(args.graylog_host) != (bool(args.graylog_port_udp) or bool(args.graylog_port_tcp) or bool(args.graylog_port_http)):
             abort(2, 'Set --graylog-host and at least one port, or omit all these options')
 
         # copy arguments into object members
@@ -303,6 +308,11 @@ class Consumer:
             self._GRAYLOG['client_tcp'] = Graylog_Client_UDP(
                 args.graylog_host,
                 args.graylog_port_tcp
+            )
+        if args.graylog_port_http:
+            self._GRAYLOG['client_http'] = Graylog_Client_HTTP(
+                args.graylog_host,
+                args.graylog_port_http
             )
 
         try:
@@ -457,10 +467,20 @@ class Consumer:
                     message_string
                 )
         except:
-            if self._GRAYLOG['client_tcp']:
-                self._GRAYLOG['client_tcp'].send(
-                    message_string
-                )
+            try:
+                if self._GRAYLOG['client_tcp']:
+                    self._GRAYLOG['client_tcp'].send(
+                        message_string
+                    )
+            except:
+                try:
+                    if self._GRAYLOG['client_http']:
+                        self._GRAYLOG['client_http'].send(
+                            message_string
+                        )
+                except:
+                    pass
+
         self._message = None
         self._log_coordinates()
 

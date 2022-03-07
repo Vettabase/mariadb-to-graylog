@@ -67,10 +67,13 @@ class Eventlog:
         if os.path.exists(file) and not options['truncate']:
             self._handler = open(file, 'r')
             last_line = self._handler.readline()
+            prev_line = None
             while last_line:
                 prev_line = last_line
                 last_line = self._handler.readline()
             self._handler.close()
+            if prev_line is None:
+                raise Exception('Eventlog is malformed')
             self._offset = int(prev_line.split(':')[0])
 
         # Empty the file if required

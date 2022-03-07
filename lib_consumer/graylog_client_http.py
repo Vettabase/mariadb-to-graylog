@@ -26,10 +26,10 @@ class Graylog_Client_HTTP(Graylog_Client):
 
     def __init__(self, host, port=12201):
         """ Compose Graylog URL. """
-        self._url = 'http://' + host + ':' + port + '/gelf'
+        self._url = 'http://' + host + ':' + str(port) + '/gelf'
 
     def send(self, gelf_message):
         """ Send the specified GELF message over an HTTP request. """
-        requests.get(self._url, data=json.loads(gelf_message))
+        self.requests.get(self._url, data=self.json.loads(gelf_message))
 
 #EOF
