@@ -26,6 +26,9 @@ For example, to test it with the HTTP protocol, first launch Netcat in a loop:
 while true ; do nc -l 12201 ; done
 ```
 
+Now make sure that you have a log that can be consumed. For example, copy an error log
+to `logs/error.log`.
+
 Then, run the script telling it to send GELF messages to localhost over HTTP:
 
 ```
