@@ -32,9 +32,19 @@ More info will follow. In the meanwhile, for usage refer to built-in help:
 To do.
 
 
-### Terminate
+### Signals
 
-To do.
+**Do not terminate the script with SIGTERM!**
+
+The script maintains eventlogs to remember which entries from the source logs were sent.
+If it stops and restarts, it will be able to resume consuming the source log from
+the right point.
+
+The script is smart enough to avoid stopping before writing an update to the eventlog.
+So, **SIGTERM** and **SIGINT** can safely be used. But **SIGTERM** cannot be handled by
+a program, so it is not safe by nature.
+
+Eventlogs are rotated by sending a **SIGHUP** to the script.
 
 
 ### Error handling
