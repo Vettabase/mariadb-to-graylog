@@ -562,8 +562,8 @@ class Consumer:
 
         if well_formed:
             # A new message starts with this line.
-            # If it is not a first (IE, a message was already composed)
-            # send the composed message.
+            # If it is not the first message (IE, a message was already composed)
+            # send the last composed message.
             if self._message:
                 self._process_message()
 
