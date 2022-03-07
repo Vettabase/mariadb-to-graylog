@@ -43,7 +43,8 @@ class Graylog_Client_HTTP(Graylog_Client):
                 self._url,
                 json=self.json.loads(gelf_message),
                 timeout=self._graylog_http_timeout_idle,
-                verify=False
+                verify=False,
+                allow_redirects=False
             )
 
 #EOF
