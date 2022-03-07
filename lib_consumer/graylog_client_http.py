@@ -41,6 +41,7 @@ class Graylog_Client_HTTP(Graylog_Client):
         with self.eventlet.Timeout(self._graylog_http_timeout):
             self.requests.post(
                 self._url,
+                headers={'Content-Type': 'application/json'},
                 json=self.json.loads(gelf_message),
                 timeout=self._graylog_http_timeout_idle,
                 verify=False,
