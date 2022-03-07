@@ -476,11 +476,6 @@ class Consumer:
 
         self._disallow_interruptions()
 
-        if self._GRAYLOG['client_http']:
-            self._GRAYLOG['client_http'].send(
-                message_string
-            )
-
         try:
             if self._GRAYLOG['client_udp']:
                 self._GRAYLOG['client_udp'].send(
