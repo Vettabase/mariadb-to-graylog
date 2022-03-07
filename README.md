@@ -2,6 +2,12 @@
 
 Consume MariaDB error log and slow log, and send events to Graylog.
 
+to install the dependencies:
+
+```
+pip -r requirements.txt
+```
+
 More info will follow. In the meanwhile, for usage refer to built-in help:
 
 ```
