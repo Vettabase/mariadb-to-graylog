@@ -16,6 +16,23 @@ More info will follow. In the meanwhile, for usage refer to built-in help:
 ```
 
 
+## Testing with Netcat
+
+To test the consumer, you may want to use netcat.
+
+For example, to test it with the HTTP protocol, first launch Netcat in a loop:
+
+```
+while true ; do nc -l 12201 ; done
+```
+
+Then, run the script telling it to send GELF messages to localhost over HTTP:
+
+```
+./mariadb-log-consumer.py --log-type=error --log=logs/error.log --graylog-host=localhost --graylog-port-http=12201 -T
+```
+
+
 ## Copyright and License
 
 Copyright  2021  Vettabase Ltd
