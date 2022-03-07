@@ -229,6 +229,19 @@ class Consumer:
             type=int,
             help='Graylog HTTP port.'
         )
+        # HTTP options
+        arg_parser.add_argument(
+            '--graylog-http-timeout-idle',
+            type=int,
+            default=5,
+            help='Timeout for the HTTP call when no data is received.'
+        )
+        arg_parser.add_argument(
+            '--graylog-http-timeout',
+            type=int,
+            default=10,
+            help='Timeout for the HTTP call. This is a hard limit.'
+        )
         # Advertised name of the local host.
         # Shortened as -n because -h is already taken
         arg_parser.add_argument(
@@ -312,7 +325,9 @@ class Consumer:
         if args.graylog_port_http:
             self._GRAYLOG['client_http'] = Graylog_Client_HTTP(
                 args.graylog_host,
-                args.graylog_port_http
+                args.graylog_port_http,
+                args.graylog_http_timeout_idle,
+                args.graylog_http_timeout
             )
 
         try:
@@ -460,6 +475,11 @@ class Consumer:
             print(message_string)
 
         self._disallow_interruptions()
+
+        if self._GRAYLOG['client_http']:
+            self._GRAYLOG['client_http'].send(
+                message_string
+            )
 
         try:
             if self._GRAYLOG['client_udp']:
