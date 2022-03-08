@@ -404,7 +404,10 @@ class Consumer:
             else:
                 self.cleanup()
         else:
-            self._requests.increment('STOP')
+            if signum == signal.SIGHUP:
+                self._requests.increment('ROTATE')
+            elif signum == signal.SIGINT or signum == signal.SIGTERM:
+                self._requests.increment('STOP')
 
 
     ##  Consumer Loop
