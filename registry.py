@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 
 """ This module only contains a Registry class, which contains global (program-level)

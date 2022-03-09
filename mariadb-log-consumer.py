@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 
 import sys
@@ -121,7 +121,7 @@ class Consumer:
 
         arg_parser = argparse.ArgumentParser(
             prog = Registry.PROGRAM,
-            version = Registry.VERSION,
+            #version = Registry.VERSION,
             description = Registry.DESCRIPTION,
             epilog =
                 'Exit codes:\n' +

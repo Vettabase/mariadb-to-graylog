@@ -1,11 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 
 """ Send messages to Graylog using a UDP port.
 """
 
 
-from graylog_client import Graylog_Client
+from .graylog_client import Graylog_Client
 
 
 class Graylog_Client_UDP(Graylog_Client):
