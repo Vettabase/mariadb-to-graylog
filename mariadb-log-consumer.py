@@ -263,7 +263,7 @@ class Consumer:
         # validate arguments
 
         if args.log.find(Eventlog.FIELD_SEPARATOR) > -1:
-            abort(2, 'The source log name and path cannot contain the character: "' + Eventlog.FIELD_SEPARATOR + '"')
+            abort(2, 'The sourcelog name and path cannot contain the character: "' + Eventlog.FIELD_SEPARATOR + '"')
 
         if args.stop is not None:
             args.stop = args.stop.upper()
@@ -333,7 +333,7 @@ class Consumer:
         try:
             self.log_handler = open(self._sourcelog_path, 'r', 0)
         except:
-            abort(2, 'Could not open source log: ' + self._sourcelog_path)
+            abort(2, 'Could not open sourcelog: ' + self._sourcelog_path)
 
         if args.hostname:
             self._hostname = args.hostname
