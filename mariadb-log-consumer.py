@@ -331,7 +331,7 @@ class Consumer:
             )
 
         try:
-            self.log_handler = open(self._sourcelog_path, 'r', 0)
+            self.log_handler = open(self._sourcelog_path, 'r')
         except:
             abort(2, 'Could not open sourcelog: ' + self._sourcelog_path)
 
