@@ -499,7 +499,7 @@ class Consumer:
             except:
                 pass
 
-        if sent == False and self._GRAYLOG['client_http']:
+        if sent == False and 'client_http' in self._GRAYLOG:
             try:
                 self._GRAYLOG['client_http'].send(
                     message_string
