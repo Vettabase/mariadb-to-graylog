@@ -484,7 +484,7 @@ class Consumer:
         if self._GRAYLOG['client_udp']:
             try:
                 self._GRAYLOG['client_udp'].send(
-                    message_string
+                    bytearray(message_string, 'us-ascii')
                 )
                 sent = True
             except:
