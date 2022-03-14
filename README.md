@@ -98,6 +98,19 @@ The program tries to always terminate with a meaningful exit code:
 - 2 - Invalid parameters
 - 3 - External error (OS, hardware, network...)
 
+A known problem is that unexpected errors are not handled, and fail in the standard Python way.
+When this happens, the Lock File is likely to exist and not be deleted. The lock file is meant
+to prevent the script from having multiple simoultaneous instances that read the same Source Log
+(or have the same `--label`).
+
+When this happens, trying to restart the script will produce an error like this:
+
+```
+Lock file exists or cannot be created: /psth/to/lock-file
+```
+
+To fix the problem, just delete the Lock File.
+
 
 ## Testing with Netcat
 
