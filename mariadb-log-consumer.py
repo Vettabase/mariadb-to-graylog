@@ -493,7 +493,7 @@ class Consumer:
         if sent == False and self._GRAYLOG['client_tcp']:
             try:
                 self._GRAYLOG['client_tcp'].send(
-                    message_string
+                    bytearray(message_string, 'us-ascii')
                 )
                 sent = True
             except:
