@@ -14,7 +14,54 @@ pip -r requirements.txt
 
 ## Usage
 
-More info will follow.
+TODO: Add explanation. The help message here is a placeholder.
+
+
+```
+  -h, --help            show this help message and exit
+  -t LOG_TYPE, --log-type LOG_TYPE
+                        Type of log to consume. Permitted values: error, slow.
+                        Permitted aliases: errorlog, errorlog. Case-insensitive.
+  -l LOG, --log LOG     Path and name of the log file to consume.
+  --limit LIMIT         Maximum number of sourcelog entries to process. Zero or
+                        a negative value means process all sourcelog entries.
+                        Implies --stop-never.
+  --offset OFFSET       Number of sourcelog entries to skip at the beginning.
+                        Zero or a negative value means skip nothing.
+  --stop STOP           When the program must stop. Allowed values:
+                            eof:    When the end of file is reached.
+                            limit:  When --limit sourcelog entries are processed.
+                            never:  Always keep running, waiting for new
+                                    entries to process.
+  --eof-wait EOF_WAIT   Number of milliseconds to wait after reaching the sourcelog
+                        end, before checking if there are new contents.
+  --message-wait MESSAGE_WAIT
+                        Number of milliseconds to wait before processing the
+                        next message, as a trivial mechanism to avoid overloading
+                        the server.
+  --label LABEL         ID for the program execution. To calls with different
+                        IDs are allowed to run simultaneously.
+                        Default: same value as --log-type.
+  -f, --force-run       Don't check if another instance of the program is
+                        running, and don't prevent other instances from running.
+  -H GRAYLOG_HOST, --graylog-host GRAYLOG_HOST
+                        Graylog hostname.
+  --graylog-port-udp GRAYLOG_PORT_UDP
+                        Graylog UDP port.
+  --graylog-port-tcp GRAYLOG_PORT_TCP
+                        Graylog TCP port.
+  --graylog-port-http GRAYLOG_PORT_HTTP
+                        Graylog HTTP port.
+  --graylog-http-timeout-idle GRAYLOG_HTTP_TIMEOUT_IDLE
+                        Timeout for the HTTP call when no data is received.
+  --graylog-http-timeout GRAYLOG_HTTP_TIMEOUT
+                        Timeout for the HTTP call. This is a hard limit.
+  -n HOSTNAME, --hostname HOSTNAME
+                        Hostname as it will be sent to Graylog.
+  -T, --truncate-eventlog
+                        Truncate the eventlog before starting. Useful if the
+                        sourcelog was replaced.
+```
 
 
 ### Help
