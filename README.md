@@ -74,11 +74,6 @@ More info will follow. In the meanwhile, for usage refer to built-in help:
 ```
 
 
-### Run
-
-To do.
-
-
 ### Signals
 
 **Do not terminate the script with SIGTERM!**
