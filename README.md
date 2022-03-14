@@ -126,7 +126,7 @@ Then, run the script telling it to send GELF messages to localhost over HTTP:
 
 ## Copyright and License
 
-Copyright  2021  Vettabase Ltd
+Copyright  2021 2022  Vettabase Ltd
 
 License: BSD 3 (BSD-New).
 
