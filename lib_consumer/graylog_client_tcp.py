@@ -33,7 +33,7 @@ class Graylog_Client_TCP(Graylog_Client):
         _sock.close()
 
     def send(self, gelf_message):
-        """ Send the specified UDP packet. """
+        """ Send the specified TCP packet. """
         _sock.sendall(gelf_message)
         _sock.recv(1024)
 
