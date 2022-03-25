@@ -35,6 +35,11 @@ class Graylog_Client_TCP(Graylog_Client):
 
     def send(self, gelf_message):
         """ Send the specified TCP packet. """
+        # @TODO
+        # The final NUL character is required by Graylog, according to the docs.
+        # But it won't work when testing with netcat.
+        # Test against a Graylog server.
+        #self._sock.sendall(gelf_message) + '\0'
         self._sock.sendall(gelf_message)
         self._sock.recv(1024)
 
