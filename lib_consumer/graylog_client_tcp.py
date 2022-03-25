@@ -23,10 +23,11 @@ class Graylog_Client_TCP(Graylog_Client):
     _sock = None
 
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, timeout):
         """ Establish a connection to Graylog. """
         self._sock = self.socket.socket(self.socket.AF_INET, self.socket.SOCK_STREAM)
         self._sock.connect((host, port))
+        self._sock.settimeout(timeout)
 
     def __del__(self):
         """ Close connections to Graylog. """

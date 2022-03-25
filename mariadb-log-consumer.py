@@ -229,6 +229,13 @@ class Consumer:
             type=int,
             help='Graylog HTTP port.'
         )
+        # TCP options
+        arg_parser.add_argument(
+            '--graylog-tcp-timeout',
+            type=int,
+            default=2,
+            help='Timeout for TCP calls.'
+        )
         # HTTP options
         arg_parser.add_argument(
             '--graylog-http-timeout-idle',
@@ -320,7 +327,8 @@ class Consumer:
         if args.graylog_port_tcp:
             self._GRAYLOG['client_tcp'] = Graylog_Client_TCP(
                 args.graylog_host,
-                args.graylog_port_tcp
+                args.graylog_port_tcp,
+                args.graylog_tcp_timeout
             )
         if args.graylog_port_http:
             self._GRAYLOG['client_http'] = Graylog_Client_HTTP(
