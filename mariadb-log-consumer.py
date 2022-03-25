@@ -86,6 +86,7 @@ class Consumer:
         # information to connect to Graylog via UDP and TCP
         'client_udp': None,
         'client_tcp': None,
+        'client_http': None,
         # GELF version to use
         'GELF_version': '1.1'
     }
