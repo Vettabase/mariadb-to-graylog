@@ -318,7 +318,7 @@ class Consumer:
                 args.graylog_port_udp
             )
         if args.graylog_port_tcp:
-            self._GRAYLOG['client_tcp'] = Graylog_Client_UDP(
+            self._GRAYLOG['client_tcp'] = Graylog_Client_TCP(
                 args.graylog_host,
                 args.graylog_port_tcp
             )

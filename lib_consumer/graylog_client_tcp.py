@@ -25,16 +25,16 @@ class Graylog_Client_TCP(Graylog_Client):
 
     def __init__(self, host, port):
         """ Establish a connection to Graylog. """
-        _sock = self.socket.socket(self.socket.AF_INET, self.socket.SOCK_STREAM)
-        _sock.connect((host, port))
+        self._sock = self.socket.socket(self.socket.AF_INET, self.socket.SOCK_STREAM)
+        self._sock.connect((host, port))
 
     def __del__(self):
         """ Close connections to Graylog. """
-        _sock.close()
+        self._sock.close()
 
     def send(self, gelf_message):
         """ Send the specified TCP packet. """
-        _sock.send(gelf_message)
-        _sock.recv(1024)
+        self._sock.sendall(gelf_message)
+        self._sock.recv(1024)
 
 #EOF
