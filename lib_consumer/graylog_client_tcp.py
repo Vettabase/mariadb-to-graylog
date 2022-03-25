@@ -25,7 +25,7 @@ class Graylog_Client_TCP(Graylog_Client):
 
     def __init__(self, host, port):
         """ Establish a connection to Graylog. """
-        _sock = self.socket.socket(self.socket.AF_INET, self.socket.SOCK_DGRAM)
+        _sock = self.socket.socket(self.socket.AF_INET, self.socket.SOCK_STREAM)
         _sock.connect((host, port))
 
     def __del__(self):
