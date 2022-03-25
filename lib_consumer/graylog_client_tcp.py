@@ -34,7 +34,7 @@ class Graylog_Client_TCP(Graylog_Client):
 
     def send(self, gelf_message):
         """ Send the specified TCP packet. """
-        _sock.sendall(gelf_message)
+        _sock.send(gelf_message)
         _sock.recv(1024)
 
 #EOF
