@@ -22,8 +22,6 @@ class Graylog_Client_HTTP(Graylog_Client):
 
     #: Graylog URL that will receive requests, including host and port.
     _url = None
-    #: Socket used to connect Graylog.
-    _sock = None
     #: HTTP requests timeout when no data is received.
     _graylog_http_timeout_idle = None
     #: HTTP requests timeout, hard limit.
