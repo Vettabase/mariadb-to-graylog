@@ -681,11 +681,6 @@ class Consumer:
         if self._eventlog.get_offset():
             self.log_handler.seek(self._eventlog.get_offset())
 
-        # set to True when repeating a loop,
-        # to indicate that we may need to wait _message_wait msecs
-        # to avoid processing messages to quickly
-        in_sequence = False
-
         while True:
             source_line = self.log_handler.readline().rstrip()
             while source_line:
@@ -695,8 +690,6 @@ class Consumer:
                     self._sourcelog_offset = self._sourcelog_offset - 1
                     source_line = self.log_handler.readline()
                     continue
-
-                in_sequence = True
 
                 if self._message_wait:
                     self.time.sleep(self._message_wait / 1000)
@@ -713,8 +706,6 @@ class Consumer:
                 self.time.sleep(self._message_wait / 1000)
             if self._message:
                 self._process_message()
-
-            in_sequence = False
 
             # We reached sourcelog EOF.
             # Depening on _stop, we exit the loop (and then the program)
