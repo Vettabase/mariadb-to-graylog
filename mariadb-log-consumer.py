@@ -295,6 +295,9 @@ class Consumer:
         if bool(args.graylog_host) != (bool(args.graylog_port_udp) or bool(args.graylog_port_tcp) or bool(args.graylog_port_http)):
             abort(2, 'Set --graylog-host and at least one port, or omit all these options')
 
+        if args.graylog_http_max_retries is not None and args.graylog_http_max_retries < 0:
+            abort(2, '--graylog-http-max-retries can only be a non-negative integer')
+
         # copy arguments into object members
 
         log_type = args.log_type.upper()
