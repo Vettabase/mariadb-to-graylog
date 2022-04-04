@@ -741,6 +741,8 @@ class Consumer:
             self._slow_log_process_line(source_line)
             source_line = self.log_handler.readline().rstrip()
 
+        self.cleanup()
+
 
 def abort(return_code, message):
     """ Abort the program with specified return code and error message """
