@@ -737,10 +737,10 @@ class Consumer:
     def _slow_log_consuming_loop(self):
         """ Consumer's main loop for the Slow log """
         while True:
-            source_line = self.log_handler.readline()
+            source_line = self.log_handler.readline().rstrip()
             while source_line:
                 self._slow_log_process_line(source_line)
-                source_line = self.log_handler.readline()
+                source_line = self.log_handler.readline().rstrip()
 
                 # enforce --limit if it is > -1
                 if self._sourcelog_limit == 0:
