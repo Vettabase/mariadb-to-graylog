@@ -37,16 +37,26 @@ class Graylog_Client_HTTP(Graylog_Client):
         # Set a hard timeout for the HTTP call
         self.eventlet.monkey_patch()
         with self.eventlet.Timeout(self._graylog_http_timeout):
-            self.requests.post(
-                self._url,
-                headers={
-                    'Content-Type': 'application/json',
-                    'User-Agent': 'Vettabase/mariadb-to-graylog'
-                },
-                json=self.json.loads(gelf_message),
-                timeout=self._graylog_http_timeout_idle,
-                verify=False,
-                allow_redirects=False
-            )
+            success = False
+            attempts_left = 3
+            while (not success) and attempts_left > 0:
+                attempts_left = attempts_left - 1
+                try:
+                    self.requests.post(
+                        self._url,
+                        headers={
+                            'Content-Type': 'application/json',
+                            'User-Agent': 'Vettabase/mariadb-to-graylog'
+                        },
+                        json=self.json.loads(gelf_message),
+                        timeout=self._graylog_http_timeout_idle,
+                        verify=True,
+                        allow_redirects=False
+                    )
+                    success = True
+                # requests exceptions are listed here:
+                # https://docs.python-requests.org/en/latest/user/quickstart/#errors-and-exceptions
+                except Exception as e:
+                    print(str(e))
 
 #EOF
