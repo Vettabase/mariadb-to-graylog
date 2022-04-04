@@ -175,7 +175,7 @@ class Consumer:
                 '    never:  Always keep running, waiting for new\n' +
                 '            entries to process.'
         )
-        # --*-wait is MariaDB stle. eof refers to --stop=eof.
+        # --*-wait is MariaDB style. eof refers to --stop=eof.
         arg_parser.add_argument(
             '--eof-wait',
             type=int,
@@ -183,7 +183,7 @@ class Consumer:
             help='Number of milliseconds to wait after reaching the sourcelog\n' +
                 'end, before checking if there are new contents.'
         )
-        # --*-wait is MariaDB stle
+        # --*-wait is MariaDB style
         arg_parser.add_argument(
             '--message-wait',
             type=int,
