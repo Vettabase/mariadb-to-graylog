@@ -736,10 +736,19 @@ class Consumer:
 
     def _slow_log_consuming_loop(self):
         """ Consumer's main loop for the Slow log """
-        source_line = self.log_handler.readline()
-        while source_line:
-            self._slow_log_process_line(source_line)
-            source_line = self.log_handler.readline().rstrip()
+        while True:
+            source_line = self.log_handler.readline()
+            while source_line:
+                self._slow_log_process_line(source_line)
+                source_line = self.log_handler.readline().rstrip()
+
+            # We reached sourcelog EOF.
+            # Depening on _stop, we exit the loop (and then the program)
+            # or we wait a given interval and repeat the loop.
+            if self._stop == 'LIMIT' or self._stop == 'EOF':
+                break
+            if self._eof_wait > 0:
+                self.time.sleep(self._eof_wait / 1000)
 
         self.cleanup()
 
