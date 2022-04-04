@@ -36,14 +36,15 @@ class Graylog_Client_HTTP(Graylog_Client):
             self, host, port=12201,
             graylog_http_timeout_idle=None,
             graylog_http_timeout=None,
-            graylog_http_max_retries=3
+            graylog_http_max_retries=3,
+            graylog_http_backoff_factor=1
         ):
         """ Compose Graylog URL. """
         self._url = 'http://' + host + ':' + str(port) + '/gelf'
 
         retry_strategy = self.Retry(
             total=graylog_http_max_retries,
-            backoff_factor=1
+            backoff_factor=graylog_http_backoff_factor
         )
         adapter = self.HTTPAdapter(max_retries=retry_strategy)
         self._connection = self.requests.Session()
