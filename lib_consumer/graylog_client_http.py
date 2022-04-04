@@ -32,7 +32,12 @@ class Graylog_Client_HTTP(Graylog_Client):
     _connection = None
 
 
-    def __init__(self, host, port=12201, graylog_http_timeout_idle=None, graylog_http_timeout=None, graylog_http_max_retries=3):
+    def __init__(
+            self, host, port=12201,
+            graylog_http_timeout_idle=None,
+            graylog_http_timeout=None,
+            graylog_http_max_retries=3
+        ):
         """ Compose Graylog URL. """
         self._url = 'http://' + host + ':' + str(port) + '/gelf'
 
