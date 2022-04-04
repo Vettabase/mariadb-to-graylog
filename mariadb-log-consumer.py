@@ -740,7 +740,13 @@ class Consumer:
             source_line = self.log_handler.readline()
             while source_line:
                 self._slow_log_process_line(source_line)
-                source_line = self.log_handler.readline().rstrip()
+                source_line = self.log_handler.readline()
+
+                # enforce --limit if it is > -1
+                if self._sourcelog_limit == 0:
+                    break
+                elif self._sourcelog_limit > 0:
+                    self._sourcelog_limit = self._sourcelog_limit - 1
 
             # We reached sourcelog EOF.
             # Depening on _stop, we exit the loop (and then the program)
