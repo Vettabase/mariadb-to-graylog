@@ -736,7 +736,7 @@ class Consumer:
 
     def _slow_log_consuming_loop(self):
         """ Consumer's main loop for the Slow log """
-        source_line = self.log_handler.readline().rstrip()
+        source_line = self.log_handler.readline()
         while source_line:
             self._slow_log_process_line(source_line)
             source_line = self.log_handler.readline().rstrip()
