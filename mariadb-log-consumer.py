@@ -250,6 +250,12 @@ class Consumer:
             default=10,
             help='Timeout for the HTTP call. This is a hard limit.'
         )
+        arg_parser.add_argument(
+            '--graylog-http-max-retries',
+            type=int,
+            default=3,
+            help='Max attempts for HTTP requests.'
+        )
         # Advertised name of the local host.
         # Shortened as -n because -h is already taken
         arg_parser.add_argument(
@@ -336,7 +342,8 @@ class Consumer:
                 args.graylog_host,
                 args.graylog_port_http,
                 args.graylog_http_timeout_idle,
-                args.graylog_http_timeout
+                args.graylog_http_timeout,
+                args.graylog_http_max_retries
             )
 
         try:
