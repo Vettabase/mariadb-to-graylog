@@ -253,7 +253,7 @@ class Consumer:
         arg_parser.add_argument(
             '--graylog-http-max-retries',
             type=int,
-            default=3,
+            default=None,
             help='Max attempts for HTTP requests.'
         )
         # Advertised name of the local host.
