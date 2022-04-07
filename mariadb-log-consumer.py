@@ -265,6 +265,11 @@ class Consumer:
             '--hostname',
             help='Hostname as it will be sent to Graylog.'
         )
+        arg_parser.add_argument(
+            '--eventlog-file',
+            default=None,
+            help='Complete path + name of the Eventlog files.'
+        )
         # -t is used for --log-type. Also
         # -t in some tools stands for table, so we'll use -T.
         arg_parser.add_argument(
@@ -360,6 +365,9 @@ class Consumer:
             self._hostname = args.hostname
         else:
             self._hostname = self._get_hostname()
+
+        if args.eventlog_file is not None:
+            self._event_log_options['path'] = args.eventlog_file
 
         if args.truncate_eventlog:
             self._event_log_options['truncate'] = True
