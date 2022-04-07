@@ -26,8 +26,9 @@ class Eventlog:
     ##  Constants
     ##  =========
 
-    #: Path of the eventlog file
-    _EVENTLOG_PATH = '/var/mariadb-to-graylog/logs'
+    #: Path of the eventlog file.
+    #: Default is ~/logs which works for any user with a home.
+    _EVENTLOG_PATH = '~/logs'
     #: Name of the eventlog file
     _EVENTLOG_NAME = 'events.log'
     #: Temporary Eventlog extension
