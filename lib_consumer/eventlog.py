@@ -23,14 +23,16 @@ class Eventlog:
         if logrotate truncates it.
     """
 
+
+    from pathlib import Path
+
+
     ##  Constants
     ##  =========
 
     #: Path of the eventlog file.
     #: Default is ~/logs which works for any user with a home.
-    _EVENTLOG_PATH = '~/logs'
-    #: Name of the eventlog file
-    _EVENTLOG_NAME = 'events.log'
+    _DEFAULT_EVENTLOG_PATH = str(Path.home()) + '/logs/events.log'
     #: Temporary Eventlog extension
     _EVENTLOG_TMP_EXTENSION = '.tmp'
 
@@ -50,7 +52,7 @@ class Eventlog:
         """ Get the filename for a new eventlog.
             It's not guaranteed that the file doesn't exist.
         """
-        return self._EVENTLOG_PATH + '/' + self._EVENTLOG_NAME
+        return self._eventlog_path
 
     def _get_name_tmp(self):
         """ Get the filename for a temporary eventlog.
@@ -58,15 +60,18 @@ class Eventlog:
         """
         return self._get_name_regular() + self._EVENTLOG_TMP_EXTENSION
 
-    def __init__(self, options):
+    def __init__(self, options, eventlog_path=None):
         """ Open newest log file. If the file is changed (eg by logrotate) it closes and reopens it. """
-        file = self._get_name_regular()
+        # This additional check is because a class member can't be an argument default.
+        if eventlog_path is None:
+            eventlog_path=self._DEFAULT_EVENTLOG_PATH
+        self.Path(eventlog_path).parent.resolve().mkdir(parents=True, exist_ok=True)
 
         # If the Eventlog exists and we're not going to truncate it,
         # read the offset from the last line and store it in self._offset,
         # so it can be read by the program.
-        if os.path.exists(file) and not options['truncate']:
-            self._handler = open(file, 'r')
+        if os.path.exists(eventlog_path) and not options['truncate']:
+            self._handler = open(eventlog_path, 'r')
             last_line = self._handler.readline()
             prev_line = None
             while last_line:
@@ -80,18 +85,18 @@ class Eventlog:
         # Empty the file if required
         if options['truncate']:
             try:
-                self._handler = open(file, 'w')
+                self._handler = open(eventlog_path, 'w')
                 self._handler.truncate(0)
                 self._handler.close()
-                self._handler = open(file, 'a')
+                self._handler = open(eventlog_path, 'a')
             except:
-                raise Exception('Could not open or create eventlog: ' + file)
+                raise Exception('Could not open or create eventlog: ' + eventlog_path)
         # Open the existing file for append
         else:
             try:
-                self._handler = open(file, 'a')
+                self._handler = open(eventlog_path, 'a')
             except:
-                raise Exception('Could not open or create eventlog: ' + file)
+                raise Exception('Could not open or create eventlog: ' + eventlog_path)
 
     def get_offset(self):
         """ Return the Eventlog offset from the previous run """
