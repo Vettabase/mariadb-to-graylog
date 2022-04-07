@@ -61,6 +61,8 @@ class Consumer:
     _eventlog = None
     #! Eventlog options distionary, to be passed to Eventlog
     _event_log_options = {
+        # Path of the logs
+        'path': None,
         # Truncate the Eventlog before starting
         'truncate': False
     }
@@ -368,7 +370,7 @@ class Consumer:
         del arg_parser
 
         try:
-            self._eventlog = Eventlog(self._event_log_options)
+            self._eventlog = Eventlog(self._event_log_options, self._event_log_options['path'])
         except Exception as e:
             abort(3, str(e))
 
