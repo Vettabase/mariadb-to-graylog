@@ -748,6 +748,7 @@ class Consumer:
 
     def _slow_log_process_line(self, line):
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
+        is_new_entry = False
         line_type = None
 
         # This block serves as easily readable documentation,
@@ -756,6 +757,7 @@ class Consumer:
             if self._sourcelog_parser_state['prev_line_type'] is None:
                 # TODO: Check if it's an SQL comment
                 if self._is_metadata_first_line(line):
+                    is_new_entry = True
                     line_type = 'META'
                 else:
                     line_type = 'SQL'
@@ -763,6 +765,7 @@ class Consumer:
                 line_type = 'META'
             elif self._sourcelog_parser_state['prev_line_type'] == 'SQL':
                 if self._is_metadata_first_line(line):
+                    is_new_entry = True
                     line_type == 'META'
                 else:
                     line_type = 'SQL'
