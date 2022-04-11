@@ -755,7 +755,6 @@ class Consumer:
         # so let's toleate verbosity.
         if line[0] == '#':
             if self._sourcelog_parser_state['prev_line_type'] is None:
-                # TODO: Check if it's an SQL comment
                 if self._is_metadata_first_line(line):
                     is_new_entry = True
                     line_type = 'META'
