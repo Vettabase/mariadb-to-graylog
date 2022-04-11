@@ -749,7 +749,10 @@ class Consumer:
         if line[0] == '#':
             if self._sourcelog_parser_state['prev_line_type'] is None:
                 # TODO: Check if it's an SQL comment
-                line_type = 'META'
+                if line[1:7] == ' Time:':
+                    line_type = 'META'
+                else:
+                    line_type = 'SQL'
             elif self._sourcelog_parser_state['prev_line_type'] == 'META':
                 line_type = 'META'
             elif self._sourcelog_parser_state['prev_line_type'] == 'SQL':
