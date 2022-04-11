@@ -78,6 +78,9 @@ class Consumer:
     _sourcelog_limit = None
     #: How many sourcelog entries will be skipped at the beginning.
     _sourcelog_offset = None
+    #: Information remembered by the sourcelog parsers
+    #: after processing each line.
+    _sourcelog_parser_state = { }
 
     #: GELF message we're composing and then sending to Graylog
     _message = None
@@ -737,27 +740,27 @@ class Consumer:
     ##  Slow Log
     ##  ========
 
-    def _slow_log_process_line(self, prev_line_type, line):
+    def _slow_log_process_line(self, line):
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
         line_type = None
 
         # This block serves as easily readable documentation,
         # so let's toleate verbosity.
         if line[0] == '#':
-            if prev_line_type is None:
+            if self._sourcelog_parser_state['prev_line_type'] is None:
                 # TODO: Check if it's an SQL comment
                 line_type = 'META'
-            elif prev_line_type == 'META':
+            elif self._sourcelog_parser_state['prev_line_type'] == 'META':
                 line_type = 'META'
-            elif prev_line_type == 'SQL':
+            elif self._sourcelog_parser_state['prev_line_type'] == 'SQL':
                 # TODO: Check if it's an SQL comment
                 line_type == 'META'
         else:
-            if prev_line_type is None:
+            if self._sourcelog_parser_state['prev_line_type'] is None:
                 line_type = None
-            elif prev_line_type == 'META':
+            elif self._sourcelog_parser_state['prev_line_type'] == 'META':
                 line_type == 'SQL'
-            elif prev_line_type == 'SQL':
+            elif self._sourcelog_parser_state['prev_line_type'] == 'SQL':
                 line_type == 'SQL'
 
         print(line)
@@ -767,7 +770,7 @@ class Consumer:
     def _slow_log_consuming_loop(self):
         """ Consumer's main loop for the Slow log """
         first_line=True
-        prev_line_type = None
+        self._sourcelog_parser_state['prev_line_type'] = None
         while True:
             source_line = self._get_source_line(is_first=first_line)
             first_line=False
@@ -779,7 +782,7 @@ class Consumer:
                     source_line = self._get_source_line()
                     continue
 
-                prev_line_type = self._slow_log_process_line(prev_line_type, source_line)
+                self._sourcelog_parser_state['prev_line_type'] = self._slow_log_process_line(source_line)
                 source_line = self._get_source_line()
 
                 # enforce --limit if it is > -1
