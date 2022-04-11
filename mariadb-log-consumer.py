@@ -740,6 +740,12 @@ class Consumer:
     ##  Slow Log
     ##  ========
 
+    def _is_metadata_first_line(self, line):
+        """ Return wether the passed line seems to be the first line
+            of a metadata section.
+        """
+        return (line[1:7] == ' Time:')
+
     def _slow_log_process_line(self, line):
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
         line_type = None
@@ -749,15 +755,17 @@ class Consumer:
         if line[0] == '#':
             if self._sourcelog_parser_state['prev_line_type'] is None:
                 # TODO: Check if it's an SQL comment
-                if line[1:7] == ' Time:':
+                if self._is_metadata_first_line(line):
                     line_type = 'META'
                 else:
                     line_type = 'SQL'
             elif self._sourcelog_parser_state['prev_line_type'] == 'META':
                 line_type = 'META'
             elif self._sourcelog_parser_state['prev_line_type'] == 'SQL':
-                # TODO: Check if it's an SQL comment
-                line_type == 'META'
+                if self._is_metadata_first_line(line):
+                    line_type == 'META'
+                else:
+                    line_type = 'SQL'
         else:
             if self._sourcelog_parser_state['prev_line_type'] is None:
                 line_type = None
