@@ -740,6 +740,13 @@ class Consumer:
         while True:
             source_line = self.log_handler.readline().rstrip()
             while source_line:
+                # if _sourcelog_offset is not negative, skip this line,
+                # read the next and decrement
+                if self._sourcelog_offset > -1:
+                    self._sourcelog_offset = self._sourcelog_offset - 1
+                    source_line = self.log_handler.readline()
+                    continue
+
                 self._slow_log_process_line(source_line)
                 source_line = self.log_handler.readline().rstrip()
 
