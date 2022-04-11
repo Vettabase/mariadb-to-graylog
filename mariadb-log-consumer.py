@@ -507,9 +507,6 @@ class Consumer:
             Prevent the program to be interrupted just before sending
             the message and release the protection after logging.
         """
-        # interval between messages
-        self._maybe_wait()
-
         message_string = self._message.to_string()
 
         if Registry.DEBUG['GELF_MESSAGES']:
