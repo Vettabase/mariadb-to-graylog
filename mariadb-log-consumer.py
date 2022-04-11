@@ -688,9 +688,9 @@ class Consumer:
             #self._message.append_to_field(True, 'text', message)
 
     def _get_source_line(self):
-        """ Return processed next line from the sourcelog,
-            after waiting _message_wait as appropriate.
+        """ Return processed next line from the sourcelog.
         """
+        return self.log_handler.readline().rstrip()
 
     def _error_log_consuming_loop(self):
         """ Consumer's main loop for the Error Log """
@@ -701,18 +701,18 @@ class Consumer:
             self.log_handler.seek(self._eventlog.get_offset())
 
         while True:
-            source_line = self.log_handler.readline().rstrip()
+            source_line = self._get_source_line()
             while source_line:
                 # if _sourcelog_offset is not negative, skip this line,
                 # read the next and decrement
                 if self._sourcelog_offset > -1:
                     self._sourcelog_offset = self._sourcelog_offset - 1
-                    source_line = self.log_handler.readline()
+                    source_line = self._get_source_line()
                     continue
 
                 self._maybe_wait()
                 self._error_log_process_line(source_line)
-                source_line = self.log_handler.readline().rstrip()
+                source_line = self._get_source_line()
 
                 # enforce --limit if it is > -1
                 if self._sourcelog_limit == 0:
@@ -744,18 +744,18 @@ class Consumer:
     def _slow_log_consuming_loop(self):
         """ Consumer's main loop for the Slow log """
         while True:
-            source_line = self.log_handler.readline().rstrip()
+            source_line = self._get_source_line()
             while source_line:
                 # if _sourcelog_offset is not negative, skip this line,
                 # read the next and decrement
                 if self._sourcelog_offset > -1:
                     self._sourcelog_offset = self._sourcelog_offset - 1
-                    source_line = self.log_handler.readline()
+                    source_line = self._get_source_line()
                     continue
 
                 self._maybe_wait()
                 self._slow_log_process_line(source_line)
-                source_line = self.log_handler.readline().rstrip()
+                source_line = self._get_source_line()
 
                 # enforce --limit if it is > -1
                 if self._sourcelog_limit == 0:
