@@ -496,14 +496,19 @@ class Consumer:
         elif self._requests.was_requested('ROTATE'):
             self._eventlog.rotate()
 
+    def _maybe_wait(self):
+        """ If _message_wait is specified, wait.
+        """
+        if self._message_wait:
+                self.time.sleep(self._message_wait / 1000)
+
     def _process_message(self):
         """ Send the message and log the coordinates.
             Prevent the program to be interrupted just before sending
             the message and release the protection after logging.
         """
         # interval between messages
-        if self._message_wait:
-                self.time.sleep(self._message_wait / 1000)
+        self._maybe_wait()
 
         message_string = self._message.to_string()
 
@@ -705,8 +710,7 @@ class Consumer:
                     source_line = self.log_handler.readline()
                     continue
 
-                if self._message_wait:
-                    self.time.sleep(self._message_wait / 1000)
+                self._maybe_wait()
                 self._error_log_process_line(source_line)
                 source_line = self.log_handler.readline().rstrip()
 
@@ -749,8 +753,7 @@ class Consumer:
                     source_line = self.log_handler.readline()
                     continue
 
-                if self._message_wait:
-                    self.time.sleep(self._message_wait / 1000)
+                self._maybe_wait()
                 self._slow_log_process_line(source_line)
                 source_line = self.log_handler.readline().rstrip()
 
