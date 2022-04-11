@@ -775,18 +775,24 @@ class Consumer:
             if self._sourcelog_parser_state['prev_line_type'] is None:
                 line_type = None
             elif self._sourcelog_parser_state['prev_line_type'] == 'META':
-                line_type == 'SQL'
+                line_type = 'SQL'
             elif self._sourcelog_parser_state['prev_line_type'] == 'SQL':
-                line_type == 'SQL'
+                line_type = 'SQL'
+
+        if is_new_entry:
+            self._sourcelog_parser_state['query_text'] = ''
+        elif line_type == 'SQL':
+            self._sourcelog_parser_state['query_text'] = self._sourcelog_parser_state['query_text'] + line
 
         self._sourcelog_parser_state['prev_line_type'] = line_type
-
+        
         print(line)
 
     def _slow_log_consuming_loop(self):
         """ Consumer's main loop for the Slow log """
         first_line=True
         self._sourcelog_parser_state['prev_line_type'] = None
+        self._sourcelog_parser_state['query_text'] = None
         while True:
             source_line = self._get_source_line(is_first=first_line)
             first_line=False
