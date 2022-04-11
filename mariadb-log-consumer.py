@@ -687,9 +687,11 @@ class Consumer:
                 print('Processing multiline message')
             #self._message.append_to_field(True, 'text', message)
 
-    def _get_source_line(self):
+    def _get_source_line(self, is_first=False):
         """ Return processed next line from the sourcelog.
         """
+        if not is_first:
+            self._maybe_wait()
         return self.log_handler.readline().rstrip()
 
     def _error_log_consuming_loop(self):
@@ -700,8 +702,10 @@ class Consumer:
         if self._eventlog.get_offset():
             self.log_handler.seek(self._eventlog.get_offset())
 
+        first_line=True
         while True:
-            source_line = self._get_source_line()
+            source_line = self._get_source_line(is_first=first_line)
+            first_line=False
             while source_line:
                 # if _sourcelog_offset is not negative, skip this line,
                 # read the next and decrement
@@ -710,7 +714,6 @@ class Consumer:
                     source_line = self._get_source_line()
                     continue
 
-                self._maybe_wait()
                 self._error_log_process_line(source_line)
                 source_line = self._get_source_line()
 
@@ -743,8 +746,10 @@ class Consumer:
 
     def _slow_log_consuming_loop(self):
         """ Consumer's main loop for the Slow log """
+        first_line=True
         while True:
-            source_line = self._get_source_line()
+            source_line = self._get_source_line(is_first=first_line)
+            first_line=False
             while source_line:
                 # if _sourcelog_offset is not negative, skip this line,
                 # read the next and decrement
@@ -753,7 +758,6 @@ class Consumer:
                     source_line = self._get_source_line()
                     continue
 
-                self._maybe_wait()
                 self._slow_log_process_line(source_line)
                 source_line = self._get_source_line()
 
