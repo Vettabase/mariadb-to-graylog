@@ -756,7 +756,7 @@ class Consumer:
 
         # This block serves as easily readable documentation,
         # so let's toleate verbosity.
-        if line[0] == '#':
+        if line[0:2] == '# ':
             if self._sourcelog_parser_state['prev_line_type'] is None:
                 if self._is_metadata_first_line(line):
                     is_new_entry = True
