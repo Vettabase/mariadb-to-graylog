@@ -748,7 +748,10 @@ class Consumer:
 
     def _slow_log_process_line(self, line):
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
+        # Wether this line seems to start a new entry
+        # (a new query metadata)
         is_new_entry = False
+        # The type of contents of this line
         line_type = None
 
         # This block serves as easily readable documentation,
