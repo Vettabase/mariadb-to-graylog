@@ -747,6 +747,8 @@ class Consumer:
                     source_line = self.log_handler.readline()
                     continue
 
+                if self._message_wait:
+                    self.time.sleep(self._message_wait / 1000)
                 self._slow_log_process_line(source_line)
                 source_line = self.log_handler.readline().rstrip()
 
@@ -755,6 +757,11 @@ class Consumer:
                     break
                 elif self._sourcelog_limit > 0:
                     self._sourcelog_limit = self._sourcelog_limit - 1
+
+            if self._message_wait:
+                self.time.sleep(self._message_wait / 1000)
+            if self._message:
+                self._process_message()
 
             # We reached sourcelog EOF.
             # Depening on _stop, we exit the loop (and then the program)
