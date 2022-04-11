@@ -501,6 +501,10 @@ class Consumer:
             Prevent the program to be interrupted just before sending
             the message and release the protection after logging.
         """
+        # interval between messages
+        if self._message_wait:
+                self.time.sleep(self._message_wait / 1000)
+
         message_string = self._message.to_string()
 
         if Registry.DEBUG['GELF_MESSAGES']:
@@ -712,8 +716,6 @@ class Consumer:
                 elif self._sourcelog_limit > 0:
                     self._sourcelog_limit = self._sourcelog_limit - 1
 
-            if self._message_wait:
-                self.time.sleep(self._message_wait / 1000)
             if self._message:
                 self._process_message()
 
@@ -758,8 +760,6 @@ class Consumer:
                 elif self._sourcelog_limit > 0:
                     self._sourcelog_limit = self._sourcelog_limit - 1
 
-            if self._message_wait:
-                self.time.sleep(self._message_wait / 1000)
             if self._message:
                 self._process_message()
 
