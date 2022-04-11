@@ -774,9 +774,9 @@ class Consumer:
             elif self._sourcelog_parser_state['prev_line_type'] == 'SQL':
                 line_type == 'SQL'
 
-        print(line)
+        self._sourcelog_parser_state['prev_line_type'] = line_type
 
-        return line_type
+        print(line)
 
     def _slow_log_consuming_loop(self):
         """ Consumer's main loop for the Slow log """
@@ -793,7 +793,7 @@ class Consumer:
                     source_line = self._get_source_line()
                     continue
 
-                self._sourcelog_parser_state['prev_line_type'] = self._slow_log_process_line(source_line)
+                self._slow_log_process_line(source_line)
                 source_line = self._get_source_line()
 
                 # enforce --limit if it is > -1
