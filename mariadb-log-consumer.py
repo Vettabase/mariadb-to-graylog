@@ -757,6 +757,12 @@ class Consumer:
         """
         return (line[0:2] == '# ')
 
+    def _slow_log_process_entry(self):
+        """ Supposed to be called when a Slow Log entry is complete.
+            Fingerprint the query, compose a GELF message, and send it.
+        """
+        print(self._sourcelog_parser_state['query_text'])
+
     def _slow_log_process_line(self, line):
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
         if not line:
@@ -794,13 +800,13 @@ class Consumer:
                 line_type = 'SQL'
 
         if is_new_entry:
+            if self._sourcelog_parser_state['query_text']:
+                self._slow_log_process_entry()
             self._sourcelog_parser_state['query_text'] = ''
         elif line_type == 'SQL':
-            self._sourcelog_parser_state['query_text'] = self._sourcelog_parser_state['query_text'] + line
+            self._sourcelog_parser_state['query_text'] = self._sourcelog_parser_state['query_text'] + "\n" + line
 
         self._sourcelog_parser_state['prev_line_type'] = line_type
-
-        print(line)
 
     def _slow_log_consuming_loop(self):
         """ Consumer's main loop for the Slow log """
