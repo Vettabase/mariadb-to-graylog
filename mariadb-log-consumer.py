@@ -785,7 +785,7 @@ class Consumer:
             self._sourcelog_parser_state['query_text'] = self._sourcelog_parser_state['query_text'] + line
 
         self._sourcelog_parser_state['prev_line_type'] = line_type
-        
+
         print(line)
 
     def _slow_log_consuming_loop(self):
