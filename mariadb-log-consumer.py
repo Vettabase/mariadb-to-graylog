@@ -740,6 +740,11 @@ class Consumer:
     ##  Slow Log
     ##  ========
 
+    #  The parser has the following states:
+    #  None:    Initial file headers
+    #  META:    Metrics about the query that is written next
+    #  SQL:     Query text
+
     def _is_metadata_first_line(self, line):
         """ Return wether the passed line seems to be the first line
             of a metadata section.
