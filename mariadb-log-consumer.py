@@ -746,6 +746,12 @@ class Consumer:
         """
         return (line[1:7] == ' Time:')
 
+    def _meybe_meta_line(self, line):
+        """ From the first characters, it looks like a line with metrics
+            about a query.
+        """
+        return (line[0:2] == '# ')
+
     def _slow_log_process_line(self, line):
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
         # Wether this line seems to start a new entry
@@ -756,7 +762,7 @@ class Consumer:
 
         # This block serves as easily readable documentation,
         # so let's toleate verbosity.
-        if line[0:2] == '# ':
+        if self._meybe_meta_line(line):
             if self._sourcelog_parser_state['prev_line_type'] is None:
                 if self._is_metadata_first_line(line):
                     is_new_entry = True
