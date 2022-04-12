@@ -754,6 +754,9 @@ class Consumer:
 
     def _slow_log_process_line(self, line):
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
+        if not line:
+            return
+
         # Wether this line seems to start a new entry
         # (a new query metadata)
         is_new_entry = False
@@ -802,22 +805,26 @@ class Consumer:
         while True:
             source_line = self._get_source_line(is_first=first_line)
             first_line=False
-            while source_line:
-                # if _sourcelog_offset is not negative, skip this line,
-                # read the next and decrement
-                if self._sourcelog_offset > -1:
-                    self._sourcelog_offset = self._sourcelog_offset - 1
+            try:
+                while True:
+                    # if _sourcelog_offset is not negative, skip this line,
+                    # read the next and decrement
+                    if self._sourcelog_offset > -1:
+                        self._sourcelog_offset = self._sourcelog_offset - 1
+                        source_line = self._get_source_line()
+                        continue
+
+                    self._slow_log_process_line(source_line)
                     source_line = self._get_source_line()
-                    continue
 
-                self._slow_log_process_line(source_line)
-                source_line = self._get_source_line()
+                    # enforce --limit if it is > -1
+                    if self._sourcelog_limit == 0:
+                        break
+                    elif self._sourcelog_limit > 0:
+                        self._sourcelog_limit = self._sourcelog_limit - 1
 
-                # enforce --limit if it is > -1
-                if self._sourcelog_limit == 0:
-                    break
-                elif self._sourcelog_limit > 0:
-                    self._sourcelog_limit = self._sourcelog_limit - 1
+            except EOFError as e:
+                pass
 
             if self._message:
                 self._process_message()
