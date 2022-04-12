@@ -777,7 +777,7 @@ class Consumer:
             elif self._sourcelog_parser_state['prev_line_type'] == 'SQL':
                 if self._is_metadata_first_line(line):
                     is_new_entry = True
-                    line_type == 'META'
+                    line_type = 'META'
                 else:
                     line_type = 'SQL'
         else:
