@@ -751,6 +751,16 @@ class Consumer:
         self._sourcelog_parser_state['prev_line_type'] = None
         self._sourcelog_parser_state['query_text'] = None
 
+    def _slow_log_query_text_set(self, line):
+        """ Assign a new value to query_text attribute.
+        """
+        self._sourcelog_parser_state['query_text'] = line
+
+    def _slow_log_query_text_append(self, line):
+        """ Append a string to query_text attribute.
+        """
+        self._sourcelog_parser_state['query_text'] = self._sourcelog_parser_state['query_text'] + line
+
     def _is_metadata_first_line(self, line):
         """ Return wether the passed line seems to be the first line
             of a metadata section.
