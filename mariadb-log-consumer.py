@@ -745,6 +745,12 @@ class Consumer:
     #  META:    Metrics about the query that is written next
     #  SQL:     Query text
 
+    def _slow_log_parser_init(self):
+        """ Initialise _sourcelog_parser_state attributes.
+        """
+        self._sourcelog_parser_state['prev_line_type'] = None
+        self._sourcelog_parser_state['query_text'] = None
+
     def _is_metadata_first_line(self, line):
         """ Return wether the passed line seems to be the first line
             of a metadata section.
@@ -811,8 +817,7 @@ class Consumer:
     def _slow_log_consuming_loop(self):
         """ Consumer's main loop for the Slow log """
         first_line=True
-        self._sourcelog_parser_state['prev_line_type'] = None
-        self._sourcelog_parser_state['query_text'] = None
+        self._slow_log_parser_init()
         while True:
             source_line = self._get_source_line(is_first=first_line)
             first_line=False
