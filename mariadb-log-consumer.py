@@ -780,6 +780,12 @@ class Consumer:
         self._sourcelog_parser_state['query_text'] = self._sourcelog_parser_state['query_text'] + "\n" + line
         self._sourcelog_parser_state['query_line'] = self._sourcelog_parser_state['query_line'] + 1
 
+    def _slow_log_query_text_skip(self):
+        """ Skip an SQL line.
+            To do so, increment query_line without changing query_text.
+        """
+        self._sourcelog_parser_state['query_line'] = self._sourcelog_parser_state['query_line'] + 1
+
     def _is_metadata_first_line(self, line):
         """ Return wether the passed line seems to be the first line
             of a metadata section.
@@ -810,12 +816,12 @@ class Consumer:
                 self._sourcelog_parser_state['query_line'] == 0
                 and line[0:4] == 'use '
             ):
-            self._sourcelog_parser_state['query_line'] = self._sourcelog_parser_state['query_line'] + 1
+            self._slow_log_query_text_skip()
         elif (
                 self._sourcelog_parser_state['query_line'] == 1
                 and line[0:14] == 'SET timestamp='
             ):
-            self._sourcelog_parser_state['query_line'] = self._sourcelog_parser_state['query_line'] + 1
+            self._slow_log_query_text_skip()
         else:
             self._slow_log_query_text_append(line)
 
