@@ -812,26 +812,38 @@ class Consumer:
         # This block serves as easily readable documentation,
         # so let's toleate verbosity.
         if self._meybe_meta_line(line):
+            # most probably metadata (could be an SQL comment tho)
             if self._sourcelog_parser_state['prev_line_type'] is None:
                 if self._is_metadata_first_line(line):
+                    # first metadata in this file
                     is_new_entry = True
                     line_type = 'META'
                 else:
+                    # not metadata. it's an SQL comment line
                     line_type = 'SQL'
             elif self._sourcelog_parser_state['prev_line_type'] == 'META':
+                # continuing metadata section
                 line_type = 'META'
             elif self._sourcelog_parser_state['prev_line_type'] == 'SQL':
+                # most probably metadata (could be an SQL comment tho)
                 if self._is_metadata_first_line(line):
+                    # beginning metadata section
                     is_new_entry = True
                     line_type = 'META'
                 else:
+                    # not metadata. it's an SQL comment line
                     line_type = 'SQL'
         else:
+            # not metadata, nor a comment line.
+            # could be file headers or SQL
             if self._sourcelog_parser_state['prev_line_type'] is None:
+                # headers (first line or not)
                 line_type = None
             elif self._sourcelog_parser_state['prev_line_type'] == 'META':
+                # beginning SQL section
                 line_type = 'SQL'
             elif self._sourcelog_parser_state['prev_line_type'] == 'SQL':
+                # continuing SQL section
                 line_type = 'SQL'
 
         if is_new_entry:
