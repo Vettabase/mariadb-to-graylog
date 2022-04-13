@@ -805,7 +805,16 @@ class Consumer:
             the query deterministic, but are not run by the user and don't
             only contain information that can be found in the meta section.
         """
-        if self._sourcelog_parser_state['query_line'] < 2:
+        # Note that the line number has not incremented yet
+        if (
+                self._sourcelog_parser_state['query_line'] == 0
+                and line[0:4] == 'use '
+            ):
+            self._sourcelog_parser_state['query_line'] = self._sourcelog_parser_state['query_line'] + 1
+        elif (
+                self._sourcelog_parser_state['query_line'] == 1
+                and line[0:14] == 'SET timestamp='
+            ):
             self._sourcelog_parser_state['query_line'] = self._sourcelog_parser_state['query_line'] + 1
         else:
             self._slow_log_query_text_append(line)
