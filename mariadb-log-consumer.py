@@ -837,9 +837,9 @@ class Consumer:
         if is_new_entry:
             if self._sourcelog_parser_state['query_text']:
                 self._slow_log_process_entry()
-            self._sourcelog_parser_state['query_text'] = ''
+            self._slow_log_query_text_unset()
         elif line_type == 'SQL':
-            self._sourcelog_parser_state['query_text'] = self._sourcelog_parser_state['query_text'] + "\n" + line
+            self._slow_log_query_text_append(line)
 
         self._sourcelog_parser_state['prev_line_type'] = line_type
 
