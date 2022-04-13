@@ -752,6 +752,12 @@ class Consumer:
         self._sourcelog_parser_state['query_text'] = None
         self._sourcelog_parser_state['query_line'] = None
 
+    def _slow_log_query_text_unset(self):
+        """ Empty the query_text attribute.
+        """
+        self._sourcelog_parser_state['query_text'] = ''
+        self._sourcelog_parser_state['query_line'] = 0
+
     def _slow_log_query_text_set(self, line):
         """ Assign a new value to query_text attribute.
         """
