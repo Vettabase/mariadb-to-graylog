@@ -777,7 +777,7 @@ class Consumer:
         """ Append a string to query_text attribute,
             increment query_line.
         """
-        self._sourcelog_parser_state['query_text'] = self._sourcelog_parser_state['query_text'] + line
+        self._sourcelog_parser_state['query_text'] = self._sourcelog_parser_state['query_text'] + "\n" + line
         self._sourcelog_parser_state['query_line'] = self._sourcelog_parser_state['query_line'] + 1
 
     def _is_metadata_first_line(self, line):
