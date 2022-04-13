@@ -801,7 +801,9 @@ class Consumer:
     def _slow_log_process_sql_line(self, line):
         """ Process a line of an SQL section.
             Skip the artificially prepended "USE" and "SET timestamp"
-            commands.
+            commands. Those commands are written into the slow log to make
+            the query deterministic, but are not run by the user and don't
+            only contain information that can be found in the meta section.
         """
         if self._sourcelog_parser_state['query_line'] < 2:
             self._sourcelog_parser_state['query_line'] = self._sourcelog_parser_state['query_line'] + 1
