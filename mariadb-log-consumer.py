@@ -798,6 +798,16 @@ class Consumer:
         """
         print(self._sourcelog_parser_state['query_text'])
 
+    def _slow_log_process_sql_line(self, line):
+        """ Process a line of an SQL section.
+            Skip the artificially prepended "USE" and "SET timestamp"
+            commands.
+        """
+        if self._sourcelog_parser_state['query_line'] < 2:
+            self._sourcelog_parser_state['query_line'] = self._sourcelog_parser_state['query_line'] + 1
+        else:
+            self._slow_log_query_text_append(line)
+
     def _slow_log_process_line(self, line):
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
         if not line:
@@ -851,7 +861,7 @@ class Consumer:
                 self._slow_log_process_entry()
             self._slow_log_query_text_unset()
         elif line_type == 'SQL':
-            self._slow_log_query_text_append(line)
+            self._slow_log_process_sql_line(line)
 
         self._sourcelog_parser_state['prev_line_type'] = line_type
 
