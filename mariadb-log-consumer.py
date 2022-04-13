@@ -748,24 +748,34 @@ class Consumer:
     def _slow_log_parser_init(self):
         """ Initialise _sourcelog_parser_state attributes.
         """
+        # State of the previous line. It's useful to find out
+        # when the new line has a different type
+        # (so, for example, a new query is starting here).
+        # See the parser states explanation above.
         self._sourcelog_parser_state['prev_line_type'] = None
+        # Text of the query we are reading.
+        # Includes the "fake" statements generated for the
+        # Slow Log.
         self._sourcelog_parser_state['query_text'] = None
+        # Number of the current query line, starting from 1.
         self._sourcelog_parser_state['query_line'] = None
 
     def _slow_log_query_text_unset(self):
-        """ Empty the query_text attribute.
+        """ Empty query_text and reset query_line attributes.
         """
         self._sourcelog_parser_state['query_text'] = ''
         self._sourcelog_parser_state['query_line'] = 0
 
     def _slow_log_query_text_set(self, line):
-        """ Assign a new value to query_text attribute.
+        """ Assign a new value to query_text attribute,
+            set query_line to 1.
         """
         self._sourcelog_parser_state['query_text'] = line
         self._sourcelog_parser_state['query_line'] = 1
 
     def _slow_log_query_text_append(self, line):
-        """ Append a string to query_text attribute.
+        """ Append a string to query_text attribute,
+            increment query_line.
         """
         self._sourcelog_parser_state['query_text'] = self._sourcelog_parser_state['query_text'] + line
         self._sourcelog_parser_state['query_line'] = self._sourcelog_parser_state['query_line'] + 1
