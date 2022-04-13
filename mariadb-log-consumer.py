@@ -835,7 +835,7 @@ class Consumer:
                 line_type = 'SQL'
 
         if is_new_entry:
-            if self._sourcelog_parser_state['query_text']:
+            if self._sourcelog_parser_state['query_line']:
                 self._slow_log_process_entry()
             self._slow_log_query_text_unset()
         elif line_type == 'SQL':
