@@ -804,7 +804,7 @@ class Consumer:
         """
         print(self._sourcelog_parser_state['query_text'])
 
-    def _slow_log_process_sql_line(self, line):
+    def _slow_log_process_sql_line(self, line, metrics):
         """ Process a line of an SQL section.
             Skip the artificially prepended "USE" and "SET timestamp"
             commands. Those commands are written into the slow log to make
@@ -825,7 +825,9 @@ class Consumer:
         else:
             self._slow_log_query_text_append(line)
 
-    def _slow_log_process_line(self, line):
+        return metrics
+
+    def _slow_log_process_line(self, line, metrics):
         """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
         if not line:
             return
@@ -878,12 +880,37 @@ class Consumer:
                 self._slow_log_process_entry()
             self._slow_log_query_text_unset()
         elif line_type == 'SQL':
-            self._slow_log_process_sql_line(line)
+            metrics = self._slow_log_process_sql_line(line, metrics)
 
         self._sourcelog_parser_state['prev_line_type'] = line_type
 
+        return metrics
+
     def _slow_log_consuming_loop(self):
         """ Consumer's main loop for the Slow log """
+        # All information that will go into the GELF_Message instance
+        metrics = {
+            "timestamp": None
+            , "user": None
+            , "ip": None
+            , "thread_id": None
+            , "schema": None
+            , "query_cache_hit": None
+            , "query_time": None
+            , "lock_time": None
+            , "rows_sent": None
+            , "rows_examined": None
+            , "rows_affected": None
+            , "bytes_sent": None
+            , "tmp_tables": None
+            , "tmp_disk_tables": None
+            , "tmp_table_sizes": None
+            , "full_scan": None
+            , "full_join": None
+            , "merge_passes": None
+            , "query_text": None
+        }
+
         first_line=True
         self._slow_log_parser_init()
         while True:
@@ -898,7 +925,7 @@ class Consumer:
                         source_line = self._get_source_line()
                         continue
 
-                    self._slow_log_process_line(source_line)
+                    metrics = self._slow_log_process_line(source_line, metrics)
                     source_line = self._get_source_line()
 
                     # enforce --limit if it is > -1
