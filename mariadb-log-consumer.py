@@ -844,6 +844,9 @@ class Consumer:
                 self._sourcelog_parser_state['query_line'] == 1
                 and line[0:14] == 'SET timestamp='
             ):
+            # We get the timestamp from here because it's in the
+            # format we need
+            self._metrics['timestamp'] = int(line[14:len(line) - 1])
             self._slow_log_query_text_skip()
         else:
             self._slow_log_query_text_append(line)
