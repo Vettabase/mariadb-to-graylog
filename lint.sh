@@ -19,6 +19,10 @@ else
         echo 'ERROR: Could not install mypy'
         exit 1
     fi
+    python3 -m pip install types-requests
+    mypy mariadb-log-consumer.py > tmp
+    rm -f tmp
+    yes | mypy src --install-types || true
 fi
 
 echo
