@@ -417,8 +417,8 @@ class Consumer:
 
         return True
 
-    def _get_timestamp(self):
-        """ Return UNIX timestamp (not decimals) """
+    def _get_timestamp(self) -> str:
+        """ Return UNIX timestamp (not decimals) as string """
         return str( int ( self.time.time() ) )
 
     def _get_hostname(self):
