@@ -421,12 +421,12 @@ class Consumer:
         """ Return UNIX timestamp (not decimals) as string """
         return str( int ( self.time.time() ) )
 
-    def _get_hostname(self):
+    def _get_hostname(self) -> str:
         """ Used to set the hostname for the first time """
         import socket
         return socket.gethostname()
 
-    def _get_current_position(self):
+    def _get_current_position(self) -> str:
         """ Get the position that we're currently reading """
         return str(self.log_handler.tell())
 
