@@ -6,6 +6,9 @@
 """
 
 
+from typing import Optional
+
+
 class Registry:
     """
     Global constants and variables (Registry pattern)
