@@ -45,6 +45,6 @@ class Registry:
     ##  ================
 
     #: Consumer instance
-    consumer = None
+    consumer = None        # type: Optional[Consumer]
 
 #EOF
