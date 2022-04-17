@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from typing import Optional
 
 import sys
 import signal
@@ -36,7 +37,7 @@ class Consumer:
     #: Lock file handler.
     #: We open this file with an exclusive lock to make sure only
     #: one istance of the consumer is running for a given label.
-    _lock_file = None
+    _lock_file = None                     # type: Optional[int]
     # Path and name of the lock file.
     _lock_file_name = None
 
