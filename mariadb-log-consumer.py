@@ -430,10 +430,14 @@ class Consumer:
         """ Get the position that we're currently reading """
         return str(self.log_handler.tell())
 
-    def _log_coordinates(self):
-        """ Log last consumed coordinates """
-        self._sourcelog_last_position = self._get_current_position()
-        self._eventlog.append(self._get_current_position(), self._sourcelog_path)
+    def _log_coordinates(self) -> bool:
+        """ Log last consumed coordinates and return success """
+        try:
+            self._sourcelog_last_position = self._get_current_position()
+            self._eventlog.append(self._get_current_position(), self._sourcelog_path)
+            return True
+        except (e):
+            return False
 
     def cleanup(self, exit_program=True):
         """ Do the cleanup and terminate program execution """
