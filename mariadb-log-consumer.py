@@ -437,7 +437,7 @@ class Consumer:
             self._sourcelog_last_position = self._get_current_position()
             self._eventlog.append(self._get_current_position(), self._sourcelog_path)
             return True
-        except (e):
+        except Exception as e:
             return False
 
     def cleanup(self, exit_program: bool = True) -> None:
