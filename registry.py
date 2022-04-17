@@ -7,6 +7,7 @@
 
 
 from typing import Optional
+from typing import Any
 
 
 class Registry:
@@ -48,6 +49,6 @@ class Registry:
     ##  ================
 
     #: Consumer instance
-    consumer = None        # type: Optional[Consumer]
+    consumer = None        # type: Optional[Any]
 
 #EOF
