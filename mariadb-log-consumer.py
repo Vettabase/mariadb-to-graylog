@@ -439,7 +439,7 @@ class Consumer:
         except (e):
             return False
 
-    def cleanup(self, exit_program=True):
+    def cleanup(self, exit_program: bool = True) -> None:
         """ Do the cleanup and terminate program execution """
         self._eventlog.close()
         if not self._force_run:
