@@ -134,12 +134,6 @@ class Consumer:
         """ Start consuming the sourcelog. """
         import argparse
 
-        # TODO: We should do this, to prevent multiple consumers to run at the same time
-        #try:
-        #    pidfile.PIDFile()
-        #except pidfile.AlreadyRunningError:
-        #    abort(1, 'PID file exists')
-
         # parse CLI arguments
 
         # Dictionary of arguments
