@@ -130,7 +130,7 @@ class Consumer:
         """ The initialiser does nothing, so we have a complete instance before starting the real work. """
         pass
 
-    def start(self):
+    def start(self) -> bool:
         """ Start consuming the sourcelog. """
         import argparse
 
@@ -420,6 +420,8 @@ class Consumer:
                 abort(3, 'Lock file exists or cannot be created: ' + self._lock_file_name)
 
         self._consuming_loop()
+
+        return True
 
     def _get_timestamp(self):
         """ Return UNIX timestamp (not decimals) """
