@@ -435,6 +435,8 @@ class Consumer:
         """ Log last consumed coordinates and return success """
         try:
             self._sourcelog_last_position = self._get_current_position()
+            if not isinstance(self._eventlog, Eventlog):
+                return False
             self._eventlog.append(self._get_current_position(), self._sourcelog_path)
             return True
         except Exception as e:
