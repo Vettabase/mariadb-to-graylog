@@ -444,7 +444,8 @@ class Consumer:
         """ Do the cleanup and terminate program execution """
         self._eventlog.close()
         if not self._force_run:
-            self.os.close(self._lock_file)
+            if isinstance(self._lock_file, int) and self._lock_file is not None:
+                self.os.close(self._lock_file)
             self.os.unlink(self._lock_file_name)
             # Destructors will close the connections where necessary
             del self._GRAYLOG['client_tcp']
