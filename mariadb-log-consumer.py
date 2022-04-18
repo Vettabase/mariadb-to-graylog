@@ -54,7 +54,7 @@ class Consumer:
     _can_be_interrupted = True
     #: Requests from signals that cannot be accomplished immediately
     #: are stored here.
-    _requests = Request_Counters(('STOP', 'ROTATE'))
+    _requests: Request_Counters = Request_Counters(('STOP', 'ROTATE'))
 
     _message_wait = None
 

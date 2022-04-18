@@ -12,6 +12,7 @@
 
 
 from typing import List
+from typing import Union
 
 
 class Request_Counters:
@@ -30,7 +31,7 @@ class Request_Counters:
     ##  Methods
     ##  =======
 
-    def __init__(self, action_list: list[str]):
+    def __init__(self, action_list: Union[list[str], tuple[str, ...]]):
         """ Accept a list or tuple of actions, assign them to _request_counters. """
         for action in action_list:
             self._request_counters[action] = 0
