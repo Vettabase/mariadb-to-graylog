@@ -467,6 +467,7 @@ class Consumer:
             # time to close, ignore the problem.
             try:
                 del self._GRAYLOG['client_tcp']
+                del self._GRAYLOG['client_http']
             except Exception as e:
                 pass
         if exit_program:
