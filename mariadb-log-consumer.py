@@ -445,13 +445,30 @@ class Consumer:
     def cleanup(self, exit_program: bool = True) -> None:
         """ Do the cleanup and terminate program execution """
         if isinstance(self._eventlog, Eventlog):
-            self._eventlog.close()
+            try:
+                self._eventlog.close()
+            except Exception as e:
+                # If for some reason the file is already closed,
+                # ignore the anomaly
+                pass
         if not self._force_run:
             if isinstance(self._lock_file, int) and self._lock_file is not None:
-                self.os.close(self._lock_file)
+                try:
+                    self.os.close(self._lock_file)
+                except Exception as e:
+                    # If for some reason the file is already closed,
+                    # ignore the anomaly
+                    pass
+            # Do not ignore this: if the file doesn't exist, someone deleted it
+            # and a conflicting instance may be running
             self.os.unlink(self._lock_file_name)
-            # Destructors will close the connections where necessary
-            del self._GRAYLOG['client_tcp']
+            # Destructors will close the connections where necessary.
+            # But if some connections were closed already or take too much
+            # time to close, ignore the problem.
+            try:
+                del self._GRAYLOG['client_tcp']
+            except Exception as e:
+                pass
         if exit_program:
             sys.exit(0)
 
