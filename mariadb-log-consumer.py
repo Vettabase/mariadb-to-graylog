@@ -444,7 +444,8 @@ class Consumer:
 
     def cleanup(self, exit_program: bool = True) -> None:
         """ Do the cleanup and terminate program execution """
-        self._eventlog.close()
+        if isinstance(self._eventlog, Eventlog):
+            self._eventlog.close()
         if not self._force_run:
             if isinstance(self._lock_file, int) and self._lock_file is not None:
                 self.os.close(self._lock_file)
