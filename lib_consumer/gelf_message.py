@@ -19,7 +19,7 @@ class GELF_Message:
     ##  =========
 
     #: GELF message in string form.
-    _message = { }
+    _message: dict[str, str] = { }
     #: Debug flags for additional output.
     debug = { }
 
