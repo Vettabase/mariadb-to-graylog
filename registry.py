@@ -20,18 +20,18 @@ class Registry:
     ##  ================
 
     #: Program name
-    PROGRAM = 'MariaDB To Graylog'
+    PROGRAM: str = 'MariaDB To Graylog'
     #: Program version
-    VERSION = '0.1'
+    VERSION: str = '0.1'
     #: Program description
-    DESCRIPTION = 'Consume MariaDB error & slow logs and send them to GrayLog'
+    DESCRIPTION: str = 'Consume MariaDB error & slow logs and send them to GrayLog'
 
     #: Length of the "short" field in characters, in GELF messages.
     #: Does not include the event severity.
-    SHORT_MESSAGE_LENGTH = 20
+    SHORT_MESSAGE_LENGTH: int = 20
 
     #: Backup flags, for additional output
-    DEBUG = {
+    DEBUG: dict[str, bool] = {
         # Normally, the consuming loop handles exceptions, to prevent program
         # crashes from leaving a lock file. Set to True to dodge exceptions
         # instead, to get a more meaningful traceback.
@@ -49,6 +49,6 @@ class Registry:
     ##  ================
 
     #: Consumer instance
-    consumer = None        # type: Optional[Any]
+    consumer: Optional[Any] = None
 
 #EOF
