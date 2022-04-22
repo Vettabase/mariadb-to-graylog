@@ -847,6 +847,10 @@ class Consumer:
         """ Supposed to be called when a Slow Log entry is complete.
             Fingerprint the query, compose a GELF message, and send it.
         """
+        import subprocess
+        self._slow_log_query_text_set(
+            subprocess.getoutput('./pt-fingerprint --query "' + self._sourcelog_parser_state['query_text'] + '"')
+        )
         print(self._sourcelog_parser_state['query_text'])
         self._reset_metrics()
 
