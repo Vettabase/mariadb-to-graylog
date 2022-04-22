@@ -5,10 +5,10 @@ Consume MariaDB error log and slow log, and send events to Graylog.
 
 ## Install
 
-To install the dependencies:
+To install the dependencies and download pt-fingerprint:
 
 ```
-pip -r requirements.txt
+./install.sh
 ```
 
 
