@@ -878,8 +878,10 @@ class Consumer:
         else:
             self._slow_log_query_text_append(line)
 
-    def _slow_log_process_line(self, line):
-        """ Process a line from the Error Log, extract information, compose a GELF message if necessary """
+    def _slow_log_process_log_line(self, line):
+        """ Process a line from the Slow Log, extract information,
+            compose a GELF message if we reached the beginning of a new entry.
+        """
         if not line:
             return
 
@@ -959,7 +961,7 @@ class Consumer:
                         source_line = self._get_source_line()
                         continue
 
-                    self._slow_log_process_line(source_line)
+                    self._slow_log_process_log_line(source_line)
                     source_line = self._get_source_line()
 
                     # enforce --limit if it is > -1
