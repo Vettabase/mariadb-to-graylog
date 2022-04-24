@@ -848,8 +848,16 @@ class Consumer:
             Fingerprint the query, compose a GELF message, and send it.
         """
         import subprocess
+        parametrized_query = subprocess.getoutput('./pt-fingerprint --query "' + self._sourcelog_parser_state['query_text'] + '"')
+        first_word = ''
+        i = 0
+        for char in parametrized_query:
+            if char == ' ':
+                break;
+            i = i + 1
+            first_word = first_word + char.upper()
         self._slow_log_query_text_set(
-            subprocess.getoutput('./pt-fingerprint --query "' + self._sourcelog_parser_state['query_text'] + '"')
+            first_word + parametrized_query[i:]
         )
         print(self._sourcelog_parser_state['query_text'])
         self._reset_metrics()
