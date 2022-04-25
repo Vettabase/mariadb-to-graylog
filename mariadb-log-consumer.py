@@ -843,21 +843,29 @@ class Consumer:
         """
         return (line[0:2] == '# ')
 
+    def _capitalize_first_word(self, phrase: str) -> str:
+        """ Return the input string with the first word in uppercase.
+            Assume that words are separated by spaces and there are
+            no trailing spaces.
+        """
+        first_word: str = ''
+        i: int = 0
+        for char in phrase:
+            if char == ' ':
+                break;
+            i = i + 1
+            first_word = first_word + char.upper()
+        return first_word + phrase[i:]
+
     def _slow_log_process_entry(self):
         """ Supposed to be called when a Slow Log entry is complete.
             Fingerprint the query, compose a GELF message, and send it.
         """
         import subprocess
         parametrized_query = subprocess.getoutput('./pt-fingerprint --query "' + self._sourcelog_parser_state['query_text'] + '"')
-        first_word = ''
-        i = 0
-        for char in parametrized_query:
-            if char == ' ':
-                break;
-            i = i + 1
-            first_word = first_word + char.upper()
+        parametrized_query = self._capitalize_first_word(parametrized_query)
         self._slow_log_query_text_set(
-            first_word + parametrized_query[i:]
+            parametrized_query
         )
         print(self._sourcelog_parser_state['query_text'])
         self._reset_metrics()
