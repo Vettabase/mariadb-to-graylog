@@ -4,3 +4,5 @@
 logs/*
 # 3rd party script downloaded by install.sh
 pt-fingerprint
+# Logs written by this program
+**/*.log
