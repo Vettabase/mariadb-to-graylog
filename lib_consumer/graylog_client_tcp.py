@@ -24,6 +24,8 @@ class Graylog_Client_TCP(Graylog_Client):
     # Whether TCP messages should end with a NUL character.
     # This is necessary with Graylog, but breaks netcat.
     _terminate_with_nul = True
+    # Expected length of Graylog answer
+    _answer_length = 1024
 
 
     def __init__(self, host, port, timeout):
@@ -41,6 +43,6 @@ class Graylog_Client_TCP(Graylog_Client):
         if self._terminate_with_nul:
             self._sock.sendall(gelf_message + '\0')
         self._sock.sendall(gelf_message)
-        self._sock.recv(1024)
+        self._sock.recv(self._answer_length)
 
 #EOF
