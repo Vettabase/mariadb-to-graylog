@@ -21,6 +21,9 @@ class Graylog_Client_TCP(Graylog_Client):
     _destination = (None, None)
     #: Socket used to connect Graylog.
     _sock = None
+    # Whether TCP messages should end with a NUL character.
+    # This is necessary with Graylog, but breaks netcat.
+    _terminate_with_nul = True
 
 
     def __init__(self, host, port, timeout):
@@ -35,11 +38,8 @@ class Graylog_Client_TCP(Graylog_Client):
 
     def send(self, gelf_message):
         """ Send the specified TCP packet. """
-        # @TODO
-        # The final NUL character is required by Graylog, according to the docs.
-        # But it won't work when testing with netcat.
-        # Test against a Graylog server.
-        #self._sock.sendall(gelf_message + '\0')
+        if self._terminate_with_nul:
+            self._sock.sendall(gelf_message + '\0')
         self._sock.sendall(gelf_message)
         self._sock.recv(1024)
 
