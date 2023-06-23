@@ -90,7 +90,7 @@ class Eventlog:
                 self._handler.close()
                 self._handler = open(eventlog_path, 'a')
             except:
-                raise Exception('Could not open or create eventlog: ' + eventlog_path)
+                raise Exception('Could not truncate eventlog: ' + eventlog_path)
         # Open the existing file for append
         else:
             try:
