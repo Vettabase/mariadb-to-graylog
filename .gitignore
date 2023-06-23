@@ -1,8 +1,8 @@
 # Exclude .pyc files
 **/*.pyc
-# Log examples for testing can be put here
+# Logs written by this program
+**/*.log
+# MariaDB logs for testing
 logs/*
 # 3rd party script downloaded by install.sh
 pt-fingerprint
-# Logs written by this program
-**/*.log
