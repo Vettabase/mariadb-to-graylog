@@ -2,7 +2,7 @@
 
 
 # let's not use /dev/null because this script may not run as root
-which mypy > tmp
+which mypy > tmp 2>&1
 r=$?
 rm -f tmp
 
