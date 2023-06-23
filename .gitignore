@@ -2,3 +2,5 @@
 **/*.pyc
 # Log examples for testing can be put here
 logs/*
+# 3rd party script downloaded by install.sh
+pt-fingerprint
