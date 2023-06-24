@@ -131,6 +131,15 @@ class GELF_Message:
         """ Return the specified key or None. """
         return self._message.get(key, defaultValue)
 
+    def get_attribute_by_value(self, needle):
+        """ Return the list of attributes with the given value. """
+        key_list = [ ]
+        for key in self._message:
+            current_value = self._message[key]
+            if current_value == needle:
+                key_list.append(current_value)
+        return ''.join(key_list)
+
     def get_attribute_count(self):
         """ Return the number of attributes in the GELF message. """
         return len(self._message)
