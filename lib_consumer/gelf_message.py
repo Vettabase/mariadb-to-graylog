@@ -138,7 +138,7 @@ class GELF_Message:
             current_value = self._message[key]
             if current_value == needle:
                 key_list.append(current_value)
-        return ''.join(key_list)
+        return key_list
 
     def get_attribute_count(self):
         """ Return the number of attributes in the GELF message. """
