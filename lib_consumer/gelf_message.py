@@ -127,7 +127,7 @@ class GELF_Message:
         """ Return whether the GELF message contains the specified key. """
         return key in self._message
 
-    def get_attribute(self, key, defaultValue = None):
+    def get_attribute_by_name(self, key, defaultValue = None):
         """ Return the specified key or None. """
         return self._message.get(key, defaultValue)
 
