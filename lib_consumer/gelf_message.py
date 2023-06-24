@@ -119,4 +119,20 @@ class GELF_Message:
 
         return gelf_message
 
+
+    ## DEBUG METHODS
+    ## =============
+
+    def attribute_exists(self, key):
+        """ Return whether the GELF message contains the specified key. """
+        return key in self._message
+
+    def get_attribute(self, key, defaultValue = None):
+        """ Return the specified key or None. """
+        return self._message.get(key, defaultValue)
+
+    def get_attribute_count(self):
+        """ Return the number of attributes in the GELF message. """
+        return len(self._message)
+
 #EOF
